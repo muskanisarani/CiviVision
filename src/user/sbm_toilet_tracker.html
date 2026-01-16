@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBM Toilet Tracker</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #efe4cf;
+}
+
+.header {
+  background: #b08f6b;
+  color: white;
+  padding: 18px 25px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back {
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.container {
+  padding: 25px;
+}
+
+.card {
+  background: #dccbb5;
+  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card h4 {
+  margin: 0;
+}
+
+.card p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #5d4a35;
+}
+
+.status {
+  background: white;
+  padding: 8px 14px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="back" onclick="history.back()">←</div>
+  <h3>SBM Toilet Tracker</h3>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div>
+      <h4>Public Toilet – Sector 5</h4>
+      <p>500m away • Open</p>
+    </div>
+    <div class="status">Clean</div>
+  </div>
+
+  <div class="card">
+    <div>
+      <h4>Community Toilet – Market Road</h4>
+      <p>1.2km away • Open</p>
+    </div>
+    <div class="status">Moderate</div>
+  </div>
+
+  <div class="card">
+    <div>
+      <h4>SBM Toilet – Bus Stand</h4>
+      <p>2km away • 24x7</p>
+    </div>
+    <div class="status">Needs Cleaning</div>
+  </div>
+
+
+</body>
+</html>

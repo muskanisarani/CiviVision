@@ -1,105 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CiviVision | Choose Role</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f2e4cf;
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .role-box {
-      background-color: #c59772;
-      padding: 40px 50px;
-      border-radius: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 450px;
-      text-align: center;
-      color: #fff;
-      margin-bottom: 25px; /* spacing between box and footer */
-    }
-
-    .logo {
-      width: 90px;
-      height: 90px;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 26px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    p {
-      color: #fdfcf8;
-      font-size: 15px;
-      margin-bottom: 25px;
-    }
-
-    .buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .btn {
-      background-color: #fff;
-      color: #5a3b1a;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .btn:hover {
-      background-color: #f4dcb4;
-      transform: scale(1.03);
-    }
-
-    footer {
-      text-align: center;
-      font-size: 13px;
-      color: #3a2b1e;
-    }
-
-    @media (max-width: 600px) {
-      .role-box {
-        width: 85%;
-        padding: 30px;
-      }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>CiviVision | AI for Society</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="home.css" />
 </head>
 <body>
 
-  <div class="role-box">
-    <h1>CiviVision</h1>
-    <p>Select your role to continue</p>
-
-    <div class="buttons">
-      <button class="btn" onclick="window.location.href='./user/user_login.html'">Login as User</button>
-      <button class="btn" onclick="window.location.href='./admin/admin_login.html'">Login as Admin</button>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <h2 class="logo">CiviVision</h2>
+      <nav>
+        <a href="user/user_login.html">Login</a>
+        <a href="user/user_register.html">SignUp</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <footer>
-    ©  CiviVision | Team CoCreate | U.V. Patel College of Engineering
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>AI that sees and solves city problems</h1>
+    <p>
+      An AI-powered civic intelligence platform that helps cities
+      detect, prioritize, and resolve urban issues faster and smarter
+      through citizen participation.
+    </p>
+
+    <div class="hero-buttons">
+      <a href="user/select_role.html" class="btn primary">Get Started</a>
+      <a href="#how" class="btn outline">How It Works</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="how">
+    <h2>Why CiviVision?</h2>
+
+    <div class="feature-grid">
+      <div class="card">
+        <h3>📸 AI Issue Detection</h3>
+        <p>Automatically identifies civic issues from images.</p>
+      </div>
+
+      <div class="card">
+        <h3>⚡ Smart Prioritization</h3>
+        <p>AI assigns urgency so critical problems are fixed first.</p>
+      </div>
+
+      <div class="card">
+        <h3>🗺️ Geo Insights</h3>
+        <p>Heatmaps help authorities plan and act proactively.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 CiviVision • AI for Society</p>
   </footer>
 
 </body>

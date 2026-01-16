@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CiviVision – Admin Dashboard</title>
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
@@ -47,8 +48,9 @@
       color: white;
       border: none;
       border-radius: 15px;
-      padding: 8px 15px;
+      padding: 8px 18px;
       font-weight: 500;
+      cursor: pointer;
     }
 
     .btn-logout:hover {
@@ -59,19 +61,21 @@
       text-align: center;
       color: #6b5744;
       font-size: 0.9rem;
-      margin-top: 30px;
+      margin: 25px 0;
     }
   </style>
 </head>
+
 <body>
 
+  <!-- TOP BAR -->
   <div class="topbar">
     Admin Dashboard – CiviVision
   </div>
 
   <div class="container my-4">
 
-    <!-- Dashboard Stats -->
+    <!-- DASHBOARD STATS -->
     <div class="row g-3 text-center">
       <div class="col-md-4">
         <div class="card">
@@ -79,12 +83,14 @@
           <div class="status-number">25</div>
         </div>
       </div>
+
       <div class="col-md-4">
         <div class="card">
           <h5>In Progress</h5>
           <div class="status-number">12</div>
         </div>
       </div>
+
       <div class="col-md-4">
         <div class="card">
           <h5>Pending</h5>
@@ -93,9 +99,10 @@
       </div>
     </div>
 
-    <!-- Complaint List -->
+    <!-- COMPLAINT LIST -->
     <div class="card my-4">
       <h5 class="mb-3 text-center">Complaint List</h5>
+
       <table class="table table-striped align-middle">
         <thead>
           <tr>
@@ -128,14 +135,17 @@
       </table>
     </div>
 
-    <!-- Interactive Map -->
+    <!-- MAP -->
     <div class="card">
       <h5 class="text-center mb-3">Complaint Map</h5>
       <div id="map"></div>
     </div>
 
+    <!-- LOGOUT (OPTIONAL) -->
     <div class="text-center mt-4">
-      <button class="btn-logout" onclick="logout()"><a href="admin_login.html" style="text-decoration: none; color: white;">Logout</a></button>
+      <button class="btn-logout" onclick="alert('Logout will be enabled later')">
+        Logout
+      </button>
     </div>
 
   </div>
@@ -144,23 +154,11 @@
     © CiviVision | Team CoCreate | U.V. Patel College of Engineering
   </footer>
 
-  <!-- Google Maps API -->
+  <!-- MAP SCRIPT -->
   <script>
-    // Redirect if not logged in
-    if (!localStorage.getItem("adminLoggedIn")) {
-      window.location.href = "admin_login.html";
-    }
-
-    // Logout button
-    function logout() {
-      localStorage.removeItem("adminLoggedIn");
-      window.location.href = "admin_login.html";
-    }
-
-    // Initialize Map
     function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 23.0225, lng: 72.5714 }, // Ahmedabad center
+        center: { lat: 23.0225, lng: 72.5714 },
         zoom: 8,
         styles: [
           { elementType: "geometry", stylers: [{ color: "#f8eddd" }] },
@@ -173,51 +171,39 @@
       });
 
       const complaints = [
-        {
-          position: { lat: 23.2156, lng: 72.6369 },
-          title: "Garbage Overflow – Gandhinagar",
-          status: "Pending"
-        },
-        {
-          position: { lat: 23.0225, lng: 72.5714 },
-          title: "Broken Streetlight – Ahmedabad",
-          status: "Resolved"
-        },
-        {
-          position: { lat: 23.5879, lng: 72.3693 },
-          title: "Pothole – Mehsana",
-          status: "In Progress"
-        }
+        { lat: 23.2156, lng: 72.6369, title: "Garbage Overflow – Gandhinagar", status: "Pending" },
+        { lat: 23.0225, lng: 72.5714, title: "Broken Streetlight – Ahmedabad", status: "Resolved" },
+        { lat: 23.5879, lng: 72.3693, title: "Pothole – Mehsana", status: "In Progress" }
       ];
 
-      // Add markers
-      complaints.forEach((issue) => {
+      complaints.forEach(c => {
         const marker = new google.maps.Marker({
-          position: issue.position,
+          position: { lat: c.lat, lng: c.lng },
           map,
-          title: issue.title,
+          title: c.title,
           icon: {
             url:
-              issue.status === "Resolved"
+              c.status === "Resolved"
                 ? "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-                : issue.status === "In Progress"
+                : c.status === "In Progress"
                 ? "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
                 : "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
           }
         });
 
-        const infoWindow = new google.maps.InfoWindow({
-          content: `<div><strong>${issue.title}</strong><br>Status: ${issue.status}</div>`
+        const info = new google.maps.InfoWindow({
+          content: `<strong>${c.title}</strong><br>Status: ${c.status}`
         });
 
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
+        marker.addListener("click", () => info.open(map, marker));
       });
     }
   </script>
 
-  <!-- Replace YOUR_API_KEY with your actual Google Maps API Key -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDl3yhByebUuTUwsWwznypXjr6c_fEGu3w&callback=initMap"></script>
+  <!-- ⚠️ Replace with your own API key -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDl3yhByebUuTUwsWwznypXjr6c_fEGu3w&callback=initMap">
+  </script>
+
 </body>
 </html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complaint Status</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #efe4cf;
+}
+
+.header {
+  background: #b08f6b;
+  color: white;
+  padding: 18px 25px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back {
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.container {
+  padding: 25px;
+}
+
+.status-card {
+  background: #dccbb5;
+  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 15px;
+}
+
+.status-card h4 {
+  margin: 0;
+}
+
+.status-card p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #5d4a35;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.pending { background: #fff3cd; color: #856404; }
+.progress { background: #cce5ff; color: #004085; }
+.resolved { background: #d4edda; color: #155724; }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="back" onclick="history.back()">←</div>
+  <h3>Complaint Status</h3>
+</div>
+
+<div class="container">
+
+  <div class="status-card">
+    <h4>Garbage Overflow – Market Area</h4>
+    <p>Reported on: 12 Jan 2026</p>
+    <span class="badge pending">Pending</span>
+  </div>
+
+  <div class="status-card">
+    <h4>Broken Streetlight – Sector 9</h4>
+    <p>Reported on: 10 Jan 2026</p>
+    <span class="badge progress">In Progress</span>
+  </div>
+
+  <div class="status-card">
+    <h4>Water Leakage – Main Road</h4>
+    <p>Reported on: 08 Jan 2026</p>
+    <span class="badge resolved">Resolved</span>
+  </div>
+
+</div>
+
+</body>
+</html>

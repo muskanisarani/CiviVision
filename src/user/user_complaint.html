@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CiviVision | File Complaint</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #efe4cf;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: #b08f6b;
+      color: white;
+      padding: 18px 30px;
+      font-size: 20px;
+      font-weight: 600;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+
+    .top-bar span {
+      cursor: pointer;
+      margin-right: 12px;
+      font-size: 22px;
+    }
+
+    /* Main Container */
+    .container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .form-card {
+      width: 850px;
+      background: #dccbb5;
+      border-radius: 28px;
+      padding: 28px 40px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 12px;
+      display: block;
+      color: #4a3b2c;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: none;
+      border-radius: 25px;
+      padding: 14px 18px;
+      margin-top: 6px;
+      font-size: 15px;
+      background: #f7f2eb;
+      outline: none;
+    }
+
+    textarea {
+      resize: none;
+      height: 90px;
+    }
+
+    /* Upload Box */
+    .upload-box {
+      margin-top: 12px;
+      border: 2px dashed #b08f6b;
+      border-radius: 25px;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #7a644b;
+      cursor: pointer;
+      background: #efe6d8;
+    }
+
+    .upload-box svg {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 8px;
+    }
+
+    /* Button */
+    .submit-btn {
+      width: 100%;
+      margin-top: 18px;
+      background: #a8825f;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background: #916c4c;
+    }
+
+    /* Laptop fit */
+    @media (max-height: 750px) {
+      .form-card {
+        transform: scale(0.95);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div class="top-bar">
+    <span onclick="history.back()">←</span>
+    File a new complaint
+  </div>
+
+  <!-- FORM -->
+  <div class="container">
+    <form class="form-card">
+
+      <label>Your Name</label>
+      <input type="text" placeholder="Enter your name" required>
+
+      <label>Location</label>
+      <input type="text" placeholder="Enter location details" required>
+
+      <label>Category</label>
+      <select required>
+        <option value="">Select issue category</option>
+        <option>Garbage / Waste</option>
+        <option>Road Damage</option>
+        <option>Water Issue</option>
+        <option>Public Toilet</option>
+        <option>Other</option>
+      </select>
+
+      <label>Description</label>
+      <textarea placeholder="Describe the issue in detail" required></textarea>
+
+      <label>Upload Photo</label>
+      <label class="upload-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Click to upload photo
+        <input type="file" hidden accept="image/*">
+      </label>
+
+      <button class="submit-btn">Submit Complaint</button>
+
+    </form>
+  </div>
+
+</body>
+</html>
