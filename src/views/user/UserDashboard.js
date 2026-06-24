@@ -13,6 +13,8 @@ const UserDashboard = () => {
     body: {
       minHeight: '100vh',
       paddingBottom: '90px', // space for navbar
+      maxWidth: '1000px',
+      margin: '0 auto',
     },
     header: {
       background: 'rgba(255, 255, 255, 0.6)',
@@ -130,7 +132,7 @@ const UserDashboard = () => {
           <div style={styles.iconCircle} onClick={() => router.push('/user/profile')} className="icon-hover">
             <i className="bi bi-person"></i>
           </div>
-          <div style={styles.iconCircle} className="icon-hover">
+          <div style={styles.iconCircle} onClick={() => router.push('/user/notifications')} className="icon-hover">
             <i className="bi bi-bell"></i>
           </div>
         </div>
@@ -182,6 +184,46 @@ const UserDashboard = () => {
             </div>
             <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Give Feedback</h4>
             <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Share ideas for betterment</p>
+          </div>
+
+          <div style={styles.card} onClick={() => router.push('/user/alerts')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-exclamation-triangle" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Active Alerts</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Water & Road advisories</p>
+          </div>
+
+          <div style={styles.card} onClick={() => router.push('/user/info')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-info-circle" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Info Center</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Citizen charter & directory</p>
+          </div>
+
+          <div style={styles.card} onClick={() => router.push('/how-to-use')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-question-circle" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>How to Use</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Stepped portal guide</p>
+          </div>
+
+          <div style={styles.card} onClick={() => router.push('/contact')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-telephone-outbound" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Contact Support</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Report bugs or ask help</p>
+          </div>
+
+          <div style={styles.card} onClick={() => router.push('/user/settings')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-gear" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Settings</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Toggle alert preferences</p>
           </div>
         </div>
 

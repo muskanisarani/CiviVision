@@ -33,11 +33,6 @@ const UserRegister = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ position: 'relative', minHeight: 'calc(100vh - 150px)' }}>
-      <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
-        <Link href="/user/login" style={{ color: '#475569', fontSize: '15px', fontWeight: '600', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <i className="bi bi-arrow-left"></i> Back to Login
-        </Link>
-      </div>
       <div className="auth-card-custom" style={{ margin: '30px auto' }}>
         <h3>Register New User</h3>
 

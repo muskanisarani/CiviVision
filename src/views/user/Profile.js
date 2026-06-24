@@ -59,7 +59,7 @@ const Profile = () => {
     },
     container: {
       padding: '24px 20px',
-      maxWidth: '600px',
+      maxWidth: '1000px',
       margin: 'auto',
     },
     card: {
@@ -93,11 +93,7 @@ const Profile = () => {
 
   return (
     <div style={styles.body}>
-      {/* HEADER */}
       <div style={{ ...styles.header, position: 'relative' }}>
-        <div style={{ position: 'absolute', top: '18px', left: '20px', cursor: 'pointer', fontSize: '22px', color: '#475569' }} onClick={() => router.push('/user/dashboard')}>
-          ←
-        </div>
         <div style={styles.avatar}>👤</div>
         <h3 style={styles.title}>{currentUser ? currentUser.name : 'Citizen'}</h3>
         <p style={styles.subtitle}>{currentUser ? currentUser.email : 'user@gmail.com'}</p>

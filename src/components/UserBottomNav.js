@@ -50,6 +50,7 @@ const UserBottomNav = () => {
 
   const isHome = currentPath === '/user/dashboard';
   const isSearch = currentPath === '/user/search';
+  const isNotifications = currentPath === '/user/notifications';
   const isProfile = currentPath === '/user/profile';
 
   return (
@@ -67,6 +68,13 @@ const UserBottomNav = () => {
       >
         <i className="bi bi-search" style={styles.icon}></i>
         Search
+      </div>
+      <div 
+        style={{ ...styles.navItem, ...(isNotifications ? styles.active : {}) }}
+        onClick={() => router.push('/user/notifications')}
+      >
+        <i className="bi bi-bell" style={styles.icon}></i>
+        Inbox
       </div>
       <div 
         style={{ ...styles.navItem, ...(isProfile ? styles.active : {}) }}

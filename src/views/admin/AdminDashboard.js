@@ -77,6 +77,9 @@ const AdminDashboard = () => {
   const styles = {
     body: {
       minHeight: '100vh',
+      maxWidth: '1000px',
+      margin: '0 auto',
+      width: '100%',
     },
     topbar: {
       backgroundColor: 'rgba(255, 255, 255, 0.6)',
@@ -84,13 +87,15 @@ const AdminDashboard = () => {
       WebkitBackdropFilter: 'blur(12px)',
       borderBottom: '1px solid rgba(15, 23, 42, 0.08)',
       color: '#0f172a',
-      textAlign: 'center',
-      padding: '16px',
+      padding: '16px 24px',
       fontWeight: '800',
       fontSize: '1.25rem',
       letterSpacing: '-0.5px',
       borderBottomLeftRadius: '24px',
       borderBottomRightRadius: '24px',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
     card: {
       backgroundColor: 'rgba(255, 255, 255, 0.55)',
@@ -129,7 +134,24 @@ const AdminDashboard = () => {
     <div style={styles.body}>
       {/* TOP BAR */}
       <div style={styles.topbar}>
-        Admin Portal – CiviVision
+        <span>Admin Control Board</span>
+        <button 
+          style={{
+            background: 'rgba(15, 23, 42, 0.05)',
+            border: '1px solid rgba(15, 23, 42, 0.1)',
+            borderRadius: '8px',
+            color: '#475569',
+            fontSize: '13px',
+            fontWeight: '600',
+            padding: '6px 12px',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}
+          className="admin-settings-btn"
+          onClick={() => router.push('/admin/settings')}
+        >
+          ⚙️ System Settings
+        </button>
       </div>
 
       <div className="container my-4">

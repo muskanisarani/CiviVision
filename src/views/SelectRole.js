@@ -80,11 +80,6 @@ const SelectRole = () => {
 
   return (
     <div style={{ ...styles.wrapper, position: 'relative' }}>
-      <div style={{ position: 'absolute', top: '24px', left: '24px' }}>
-        <Link href="/" style={{ color: '#475569', fontSize: '15px', fontWeight: '600', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <i className="bi bi-arrow-left"></i> Back to Home
-        </Link>
-      </div>
 
       <div style={styles.card}>
         <h2 style={styles.logo}>CiviVision</h2>

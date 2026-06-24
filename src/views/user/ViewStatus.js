@@ -47,7 +47,7 @@ const ViewStatus = () => {
     },
     container: {
       padding: '24px 20px',
-      maxWidth: '600px',
+      maxWidth: '1000px',
       margin: 'auto',
     },
     statusCard: {
@@ -107,7 +107,6 @@ const ViewStatus = () => {
   return (
     <div style={styles.body}>
       <div style={styles.header}>
-        <div style={styles.back} onClick={() => router.back()}>←</div>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', letterSpacing: '-0.25px' }}>Complaint Status</h3>
       </div>
 

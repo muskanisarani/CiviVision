@@ -36,7 +36,7 @@ const Search = () => {
     },
     container: {
       padding: '24px 20px',
-      maxWidth: '600px',
+      maxWidth: '1000px',
       margin: 'auto',
     },
     searchBox: {
@@ -86,9 +86,7 @@ const Search = () => {
 
   return (
     <div style={styles.body}>
-      {/* HEADER */}
       <div style={{ ...styles.header, display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ cursor: 'pointer', fontSize: '22px' }} onClick={() => router.push('/user/dashboard')}>←</div>
         <div>
           <h3 style={styles.title}>Search</h3>
           <p style={styles.subtitle}>Find complaints, locations</p>

@@ -51,7 +51,7 @@ const Feedback = () => {
       borderRadius: '24px',
       padding: '30px 28px',
       width: '100%',
-      maxWidth: '480px',
+      maxWidth: '1000px',
       boxShadow: '0 20px 45px rgba(15, 23, 42, 0.06)',
     },
     textarea: {
@@ -86,7 +86,6 @@ const Feedback = () => {
   return (
     <div style={styles.body}>
       <div style={styles.header}>
-        <div style={styles.back} onClick={() => router.back()}>←</div>
         <div>
           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800' }}>Feedback</h3>
           <p style={{ margin: '3px 0 0', fontSize: '13px', color: '#475569' }}>Your opinion matters</p>

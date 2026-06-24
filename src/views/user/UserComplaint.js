@@ -12,15 +12,43 @@ const UserComplaint = () => {
   const [photo, setPhoto] = useState(null);
   const [alertMessage, setAlertMessage] = useState(null);
 
+  // Dynamic Category States
+  const [garbageSize, setGarbageSize] = useState('');
+  const [wasteType, setWasteType] = useState('');
+  const [roadDamageType, setRoadDamageType] = useState('');
+  const [damageImpact, setDamageImpact] = useState('');
+  const [waterLeakSeverity, setWaterLeakSeverity] = useState('');
+  const [waterLeakType, setWaterLeakType] = useState('');
+  const [streetlightPoleNo, setStreetlightPoleNo] = useState('');
+  const [streetlightIssue, setStreetlightIssue] = useState('');
+  const [drainageFloodingScale, setDrainageFloodingScale] = useState('');
+  const [drainageBlockage, setDrainageBlockage] = useState('');
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    // Compile dynamic details based on category choice
+    let categoryDetails = '';
+    if (category === 'Garbage / Waste') {
+      categoryDetails = `\n\n[Garbage Details]\nHeap Size: ${garbageSize || 'Standard'}\nWaste Type: ${wasteType || 'General'}`;
+    } else if (category === 'Road Damage') {
+      categoryDetails = `\n\n[Road Details]\nDamage Type: ${roadDamageType || 'Pothole'}\nSafety Impact: ${damageImpact || 'Medium'}`;
+    } else if (category === 'Water Issue') {
+      categoryDetails = `\n\n[Water Details]\nSeverity: ${waterLeakSeverity || 'Low'}\nWater Category: ${waterLeakType || 'Clean Water'}`;
+    } else if (category === 'Streetlights') {
+      categoryDetails = `\n\n[Streetlight Details]\nPole ID: ${streetlightPoleNo || 'N/A'}\nIssue: ${streetlightIssue || 'Dead Bulb'}`;
+    } else if (category === 'Drainage & Sewerage') {
+      categoryDetails = `\n\n[Drainage Details]\nFlooding Scale: ${drainageFloodingScale || 'Minor'}\nBlockage: ${drainageBlockage || 'Debris'}`;
+    }
+
+    const fullDescription = description + categoryDetails;
+
     // Simulate complaint creation and save to localStorage
     const newComplaint = {
       id: `#00${Math.floor(Math.random() * 900) + 100}`,
       category: category || 'General',
       location: location,
-      description: description,
+      description: fullDescription,
       status: 'Pending',
       date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
     };
@@ -29,7 +57,18 @@ const UserComplaint = () => {
     currentComplaints.unshift(newComplaint);
     localStorage.setItem('complaints', JSON.stringify(currentComplaints));
 
-    setAlertMessage('Complaint submitted successfully!');
+    // Also trigger a user notification alert for real website feel
+    const currentNotifications = JSON.parse(localStorage.getItem('userNotifications') || '[]');
+    currentNotifications.unshift({
+      id: `notif-${Date.now()}`,
+      title: 'Complaint Registered',
+      body: `Your complaint for "${category}" at "${location}" has been logged as ${newComplaint.id}.`,
+      date: 'Just now',
+      unread: true
+    });
+    localStorage.setItem('userNotifications', JSON.stringify(currentNotifications));
+
+    setAlertMessage(`Complaint ${newComplaint.id} submitted successfully! SBM Resolution Officers have been notified.`);
   };
 
   const styles = {
@@ -67,7 +106,7 @@ const UserComplaint = () => {
     },
     formCard: {
       width: '100%',
-      maxWidth: '600px',
+      maxWidth: '1000px',
       backgroundColor: 'rgba(255, 255, 255, 0.55)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
@@ -149,7 +188,6 @@ const UserComplaint = () => {
     <div style={styles.body}>
       {/* HEADER */}
       <div style={styles.topBar}>
-        <span style={styles.backSpan} onClick={() => router.back()}>←</span>
         File a new complaint
       </div>
 
@@ -190,9 +228,125 @@ const UserComplaint = () => {
             <option value="Garbage / Waste" style={{ background: '#ffffff', color: '#0f172a' }}>Garbage / Waste</option>
             <option value="Road Damage" style={{ background: '#ffffff', color: '#0f172a' }}>Road Damage</option>
             <option value="Water Issue" style={{ background: '#ffffff', color: '#0f172a' }}>Water Issue</option>
+            <option value="Streetlights" style={{ background: '#ffffff', color: '#0f172a' }}>Streetlights</option>
+            <option value="Drainage & Sewerage" style={{ background: '#ffffff', color: '#0f172a' }}>Drainage & Sewerage</option>
             <option value="Public Toilet" style={{ background: '#ffffff', color: '#0f172a' }}>Public Toilet</option>
             <option value="Other" style={{ background: '#ffffff', color: '#0f172a' }}>Other</option>
           </select>
+
+          {/* DYNAMIC FIELDS */}
+          {category === 'Garbage / Waste' && (
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '14px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Volume / Size</label>
+                <select style={styles.input} className="input-focus" value={garbageSize} onChange={(e) => setGarbageSize(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Size</option>
+                  <option value="Small pile" style={{ background: '#ffffff', color: '#0f172a' }}>Small Pile</option>
+                  <option value="Medium dump" style={{ background: '#ffffff', color: '#0f172a' }}>Medium Dump</option>
+                  <option value="Large blockage" style={{ background: '#ffffff', color: '#0f172a' }}>Large Waste Blockage</option>
+                </select>
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Waste Type</label>
+                <select style={styles.input} className="input-focus" value={wasteType} onChange={(e) => setWasteType(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Type</option>
+                  <option value="Organic / Food" style={{ background: '#ffffff', color: '#0f172a' }}>Organic / Food</option>
+                  <option value="Dry recyclables" style={{ background: '#ffffff', color: '#0f172a' }}>Dry Recyclables</option>
+                  <option value="Hazardous / Medical" style={{ background: '#ffffff', color: '#0f172a' }}>Hazardous / Medical</option>
+                  <option value="Electronic (E-waste)" style={{ background: '#ffffff', color: '#0f172a' }}>E-waste</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {category === 'Road Damage' && (
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '14px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Damage Type</label>
+                <select style={styles.input} className="input-focus" value={roadDamageType} onChange={(e) => setRoadDamageType(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Type</option>
+                  <option value="Pothole" style={{ background: '#ffffff', color: '#0f172a' }}>Pothole</option>
+                  <option value="Road sink/Cave-in" style={{ background: '#ffffff', color: '#0f172a' }}>Sinkhole/Cave-in</option>
+                  <option value="Cracked pavement" style={{ background: '#ffffff', color: '#0f172a' }}>Cracked Pavement</option>
+                  <option value="Broken divider" style={{ background: '#ffffff', color: '#0f172a' }}>Broken Divider</option>
+                </select>
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Safety Threat</label>
+                <select style={styles.input} className="input-focus" value={damageImpact} onChange={(e) => setDamageImpact(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Threat</option>
+                  <option value="Low (Minor delay)" style={{ background: '#ffffff', color: '#0f172a' }}>Low (Minor delay)</option>
+                  <option value="Medium (Tire hazard)" style={{ background: '#ffffff', color: '#0f172a' }}>Medium (Tire hazard)</option>
+                  <option value="High (Major accident risk)" style={{ background: '#ffffff', color: '#0f172a' }}>Accident Risk</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {category === 'Water Issue' && (
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '14px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Leak Severity</label>
+                <select style={styles.input} className="input-focus" value={waterLeakSeverity} onChange={(e) => setWaterLeakSeverity(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Severity</option>
+                  <option value="Slow Seepage" style={{ background: '#ffffff', color: '#0f172a' }}>Slow Seepage</option>
+                  <option value="Active Spout/Flow" style={{ background: '#ffffff', color: '#0f172a' }}>Active Spout/Flow</option>
+                  <option value="High Pressure Pipe Burst" style={{ background: '#ffffff', color: '#0f172a' }}>Pipeline Burst</option>
+                </select>
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Water Quality</label>
+                <select style={styles.input} className="input-focus" value={waterLeakType} onChange={(e) => setWaterLeakType(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Water Type</option>
+                  <option value="Clean/Drinking Water" style={{ background: '#ffffff', color: '#0f172a' }}>Clean/Drinking Water</option>
+                  <option value="Muddy/Turbid" style={{ background: '#ffffff', color: '#0f172a' }}>Muddy/Turbid Water</option>
+                  <option value="Sewage / Stagnant" style={{ background: '#ffffff', color: '#0f172a' }}>Sewage / Stagnant</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {category === 'Streetlights' && (
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '14px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Pole ID (If visible)</label>
+                <input type="text" placeholder="e.g. GMC-1042" style={styles.input} className="input-focus" value={streetlightPoleNo} onChange={(e) => setStreetlightPoleNo(e.target.value)} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}> streetlight Issue</label>
+                <select style={styles.input} className="input-focus" value={streetlightIssue} onChange={(e) => setStreetlightIssue(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Issue</option>
+                  <option value="Bulb completely dead" style={{ background: '#ffffff', color: '#0f172a' }}>Bulb Dead</option>
+                  <option value="Flickering light" style={{ background: '#ffffff', color: '#0f172a' }}>Flickering Light</option>
+                  <option value="Exposed wires danger" style={{ background: '#ffffff', color: '#0f172a' }}>Exposed Wires</option>
+                  <option value="Damaged/Fallen pole" style={{ background: '#ffffff', color: '#0f172a' }}>Damaged Post</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {category === 'Drainage & Sewerage' && (
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '14px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Flooding Level</label>
+                <select style={styles.input} className="input-focus" value={drainageFloodingScale} onChange={(e) => setDrainageFloodingScale(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Level</option>
+                  <option value="Minor Puddle" style={{ background: '#ffffff', color: '#0f172a' }}>Minor Puddle</option>
+                  <option value="Ankle deep overflow" style={{ background: '#ffffff', color: '#0f172a' }}>Ankle Deep</option>
+                  <option value="Severe street flooding" style={{ background: '#ffffff', color: '#0f172a' }}>Street Flooding</option>
+                </select>
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={styles.label}>Blocked By</label>
+                <select style={styles.input} className="input-focus" value={drainageBlockage} onChange={(e) => setDrainageBlockage(e.target.value)} required>
+                  <option value="" style={{ background: '#ffffff', color: '#0f172a' }}>Select Blockage</option>
+                  <option value="Silt/Leaves" style={{ background: '#ffffff', color: '#0f172a' }}>Silt & Leaves</option>
+                  <option value="Plastics & Garbage" style={{ background: '#ffffff', color: '#0f172a' }}>Plastics & Garbage</option>
+                  <option value="Construction Rubble" style={{ background: '#ffffff', color: '#0f172a' }}>Construction Rubble</option>
+                </select>
+              </div>
+            </div>
+          )}
 
           <label style={styles.label}>Description</label>
           <textarea

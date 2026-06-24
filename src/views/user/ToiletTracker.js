@@ -30,7 +30,7 @@ const ToiletTracker = () => {
     },
     container: {
       padding: '24px 20px',
-      maxWidth: '600px',
+      maxWidth: '1000px',
       margin: 'auto',
     },
     card: {
@@ -98,8 +98,7 @@ const ToiletTracker = () => {
   return (
     <div style={styles.body}>
       <div style={styles.header}>
-        <div style={styles.back} onClick={() => router.back()}>←</div>
-        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', letterSpacing: '-0.25px' }}>SBM Toilet Tracker</h3>
+        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', letterSpacing: '-0.25px' }}>Public Toilet Tracker</h3>
       </div>
 
       <div style={styles.container}>

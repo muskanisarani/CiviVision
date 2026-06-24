@@ -144,12 +144,12 @@ button {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  padding: 12px 24px;
+  padding: 12px 0;
 }
 
 .header-container {
-  max-width: 1100px;
-  margin: 0 auto;
+  width: 100%;
+  padding: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -186,7 +186,6 @@ button {
   border-top: 1px solid rgba(15, 23, 42, 0.06);
   padding: 20px 24px;
   margin-top: auto;
-  text-align: center;
 }
 
 .footer-container {
@@ -198,6 +197,16 @@ button {
   font-size: 12px;
   color: #64748b;
   margin: 0;
+}
+
+.footer-link-custom {
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-link-custom:hover {
+  color: #6366f1 !important;
+  transform: translateX(4px);
 }
 
 /* Global Header Navigation */
@@ -272,4 +281,14 @@ button {
   font-size: 13px;
   font-weight: 700;
   color: #0f172a;
+}
+
+.header-back-arrow {
+  transition: all 0.2s ease;
+}
+
+.header-back-arrow:hover {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+  color: #6366f1 !important;
+  transform: translateX(-2px);
 }
