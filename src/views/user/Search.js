@@ -9,9 +9,12 @@ const Search = () => {
 
   const styles = {
     body: {
-      minHeight: '100vh',
-      paddingBottom: '90px', // space for navbar
-      fontFamily: 'Segoe UI, sans-serif',
+      minHeight: 'calc(100vh - 150px)',
+      fontFamily: '"Segoe UI", sans-serif',
+      padding: '40px 20px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
     },
     header: {
       backgroundColor: 'rgba(255, 255, 255, 0.6)',
@@ -85,7 +88,7 @@ const Search = () => {
   );
 
   return (
-    <div style={styles.body}>
+    <div style={styles.body} className="user-search-body">
       <div style={{ ...styles.header, display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div>
           <h3 style={styles.title}>Search</h3>

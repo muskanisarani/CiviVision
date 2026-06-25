@@ -54,7 +54,7 @@ const UserBottomNav = () => {
   const isProfile = currentPath === '/user/profile';
 
   return (
-    <div style={styles.bottomNav}>
+    <div style={styles.bottomNav} className="user-bottom-nav">
       <div 
         style={{ ...styles.navItem, ...(isHome ? styles.active : {}) }}
         onClick={() => router.push('/user/dashboard')}

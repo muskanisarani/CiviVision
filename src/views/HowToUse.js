@@ -1,9 +1,23 @@
 "use client";
-import React from 'react';
+import React, { useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { AuthContext } from '../context/AuthContext';
 
 const HowToUse = () => {
   const router = useRouter();
+  const { currentUser } = useContext(AuthContext);
+
+  const handleGetStarted = () => {
+    if (currentUser) {
+      if (currentUser.role === 'admin') {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/user/dashboard');
+      }
+    } else {
+      router.push('/user/login');
+    }
+  };
 
   const styles = {
     body: {
@@ -141,7 +155,7 @@ const HowToUse = () => {
           </div>
         </div>
 
-        <button style={styles.backBtn} className="btn-back-hover" onClick={() => router.push('/')}>
+        <button style={styles.backBtn} className="btn-back-hover" onClick={handleGetStarted}>
           Get Started Now
         </button>
       </div>

@@ -292,3 +292,18 @@ button {
   color: #6366f1 !important;
   transform: translateX(-2px);
 }
+
+@media (min-width: 768px) {
+  .user-bottom-nav {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .user-dashboard-body,
+  .user-profile-body,
+  .user-search-body,
+  .user-notifications-body {
+    padding-bottom: 90px !important;
+  }
+}

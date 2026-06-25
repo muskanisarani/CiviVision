@@ -108,7 +108,26 @@ const ToiletTracker = () => {
               <h4 style={styles.cardTitle}>{t.name}</h4>
               <p style={styles.cardSubtitle}>{t.details}</p>
             </div>
-            <div style={{ ...styles.statusBadge, ...getStatusStyle(t.status) }}>{t.status}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+              <div style={{ ...styles.statusBadge, ...getStatusStyle(t.status) }}>{t.status}</div>
+              <button 
+                style={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.06)',
+                  color: '#ef4444',
+                  border: '1px solid rgba(239, 68, 68, 0.15)',
+                  borderRadius: '10px',
+                  padding: '6px 12px',
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                className="report-btn-hover"
+                onClick={() => router.push(`/user/complaint?category=Public Toilet Issue&location=${encodeURIComponent(t.name)}`)}
+              >
+                ⚠️ Report Issue
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -118,6 +137,11 @@ const ToiletTracker = () => {
           transform: translateY(-2px);
           border-color: rgba(99, 102, 241, 0.25) !important;
           background-color: rgba(255, 255, 255, 0.8) !important;
+        }
+        .report-btn-hover:hover {
+          background-color: #ef4444 !important;
+          color: #ffffff !important;
+          box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2) !important;
         }
       `}</style>
     </div>

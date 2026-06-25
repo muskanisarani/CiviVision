@@ -50,16 +50,24 @@ const GlobalHeader = () => {
               {currentUser.role === 'admin' ? (
                 <>
                   <span className="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1" style={{ fontSize: '11px', fontWeight: '700' }}>ADMIN</span>
-                  <Link href="/admin/dashboard" className="header-link">Control Board</Link>
-                  <Link href="/admin/settings" className="header-link d-none d-sm-inline-block">System Settings</Link>
+                  {pathname !== '/admin/dashboard' && (
+                    <Link href="/admin/dashboard" className="header-link">Control Board</Link>
+                  )}
+                  {pathname !== '/admin/settings' && (
+                    <Link href="/admin/settings" className="header-link d-none d-sm-inline-block">System Settings</Link>
+                  )}
                 </>
               ) : (
                 <>
-                  <Link href="/user/dashboard" className="header-link">Dashboard</Link>
-                  <Link href="/user/alerts" className="header-link">Alerts</Link>
-                  <Link href="/user/info" className="header-link d-none d-sm-inline-block">Info Center</Link>
-                  <Link href="/user/profile" className="header-link">Profile</Link>
-                  <Link href="/user/settings" className="header-link d-none d-md-inline-block">Settings</Link>
+                  {pathname !== '/user/dashboard' && (
+                    <Link href="/user/dashboard" className="header-link">Dashboard</Link>
+                  )}
+                  {pathname !== '/user/alerts' && (
+                    <Link href="/user/alerts" className="header-link">Alerts</Link>
+                  )}
+                  {pathname !== '/user/profile' && (
+                    <Link href="/user/profile" className="header-link">Profile</Link>
+                  )}
                 </>
               )}
               <button onClick={handleLogoutClick} className="header-btn-outline" style={{ border: '1px solid rgba(239, 68, 68, 0.2)', color: '#dc2626', background: 'rgba(239, 68, 68, 0.05)' }}>

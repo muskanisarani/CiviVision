@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '../../context/AuthContext';
 import UserBottomNav from '../../components/UserBottomNav';
@@ -9,32 +9,65 @@ const UserDashboard = () => {
   const router = useRouter();
   const [alertMessage, setAlertMessage] = useState(null);
 
+  // Avatar States
+  const [avatarType, setAvatarType] = useState('badge');
+  const [avatarBadge, setAvatarBadge] = useState('initials');
+  const [avatarUrl, setAvatarUrl] = useState(null);
+
+  useEffect(() => {
+    const savedType = localStorage.getItem('userAvatarType') || 'badge';
+    const savedBadge = localStorage.getItem('userAvatarBadge') || 'initials';
+    const savedUrl = localStorage.getItem('userAvatarUrl') || null;
+    setAvatarType(savedType);
+    setAvatarBadge(savedBadge);
+    setAvatarUrl(savedUrl);
+  }, []);
+
+
+  const getInitials = (userName) => {
+    if (!userName) return 'C';
+    const parts = userName.trim().split(/\s+/);
+    if (parts.length > 1) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
+  };
+
   const styles = {
     body: {
-      minHeight: '100vh',
-      paddingBottom: '90px', // space for navbar
+      minHeight: 'calc(100vh - 150px)',
+      fontFamily: '"Segoe UI", sans-serif',
+      padding: '40px 20px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    container: {
       maxWidth: '1000px',
-      margin: '0 auto',
+      width: '100%',
+      backgroundColor: 'rgba(255, 255, 255, 0.55)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      border: '1px solid rgba(15, 23, 42, 0.08)',
+      borderRadius: '24px',
+      padding: '40px 30px',
+      boxShadow: '0 20px 45px rgba(15, 23, 42, 0.05)',
     },
     header: {
-      background: 'rgba(255, 255, 255, 0.6)',
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
-      borderBottom: '1px solid rgba(15, 23, 42, 0.08)',
-      color: '#0f172a',
-      padding: '24px 22px',
-      borderBottomLeftRadius: '24px',
-      borderBottomRightRadius: '24px',
-    },
-    headerTop: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: '16px',
+      marginBottom: '30px',
+      borderBottom: '1px solid rgba(15, 23, 42, 0.08)',
+      paddingBottom: '20px',
+    },
+    headerTop: {
+      display: 'flex',
+      gap: '12px',
     },
     iconCircle: {
-      width: '38px',
-      height: '38px',
+      width: '40px',
+      height: '40px',
       backgroundColor: 'rgba(15, 23, 42, 0.04)',
       border: '1px solid rgba(15, 23, 42, 0.08)',
       borderRadius: '50%',
@@ -47,21 +80,18 @@ const UserDashboard = () => {
       color: '#475569',
     },
     title: {
-      margin: '0 0 4px',
-      fontSize: '22px',
+      margin: '0',
+      fontSize: '28px',
       fontWeight: '800',
       letterSpacing: '-0.5px',
-      background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)',
+      background: 'linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
     },
     subtitle: {
-      margin: 0,
+      margin: '4px 0 0 0',
       fontSize: '14px',
       color: '#475569',
-    },
-    container: {
-      padding: '20px',
     },
     statusCard: {
       background: 'rgba(255, 255, 255, 0.5)',
@@ -96,8 +126,9 @@ const UserDashboard = () => {
     },
     grid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
       gap: '16px',
+      marginBottom: '24px',
     },
     card: {
       background: 'rgba(255, 255, 255, 0.55)',
@@ -125,23 +156,40 @@ const UserDashboard = () => {
   };
 
   return (
-    <div style={styles.body}>
-      {/* HEADER */}
-      <div style={styles.header}>
-        <div style={styles.headerTop}>
-          <div style={styles.iconCircle} onClick={() => router.push('/user/profile')} className="icon-hover">
-            <i className="bi bi-person"></i>
+    <div style={styles.body} className="user-dashboard-body">
+      <div style={styles.container}>
+        {/* HEADER */}
+        <div style={styles.header}>
+          <div>
+            <h2 style={styles.title}>Welcome!</h2>
+            <p style={styles.subtitle}>Hello, {currentUser ? currentUser.name : 'Citizen'}</p>
           </div>
-          <div style={styles.iconCircle} onClick={() => router.push('/user/notifications')} className="icon-hover">
-            <i className="bi bi-bell"></i>
+          <div style={styles.headerTop}>
+            <div 
+              style={{ ...styles.iconCircle, overflow: 'hidden', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
+              onClick={() => router.push('/user/profile')} 
+              className="icon-hover" 
+              title="Profile"
+            >
+              {avatarType === 'upload' && avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span style={{ fontSize: avatarBadge === 'initials' ? '14px' : '18px', fontWeight: '800' }}>
+                  {avatarBadge === 'eco' ? '🍃' : 
+                   avatarBadge === 'defender' ? '🛡️' :
+                   avatarBadge === 'urban' ? '🏙️' :
+                   avatarBadge === 'hero' ? '🦸‍♂️' :
+                   avatarBadge === 'elite' ? '🌟' :
+                   avatarBadge === 'power' ? '⚡' : 
+                   avatarBadge === 'initials' ? getInitials(currentUser ? currentUser.name : 'Citizen') : '👤'}
+                </span>
+              )}
+            </div>
+            <div style={styles.iconCircle} onClick={() => router.push('/user/notifications')} className="icon-hover" title="Notifications">
+              <i className="bi bi-bell"></i>
+            </div>
           </div>
         </div>
-        <h2 style={styles.title}>Good Morning, Welcome !</h2>
-        <p style={styles.subtitle}>Hi dear {currentUser ? currentUser.name : 'Citizen'}</p>
-      </div>
-
-      {/* CONTENT */}
-      <div style={styles.container}>
         <div style={styles.statusCard}>
           <div>
             <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#475569' }}>Dustbins reported uncleaned</h4>
@@ -156,18 +204,10 @@ const UserDashboard = () => {
         <div style={styles.grid}>
           <div style={styles.card} onClick={() => router.push('/user/complaint')} className="dashboard-card">
             <div style={styles.cardIcon}>
-              <i className="bi bi-file-earmark-text" style={{ color: '#6366f1' }}></i>
+              <i className="bi bi-camera" style={{ color: '#6366f1' }}></i>
             </div>
-            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Post AI Complaint</h4>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>AI auto-verifies Suroundings</p>
-          </div>
-
-          <div style={styles.card} onClick={() => router.push('/user/complaint')} className="dashboard-card">
-            <div style={styles.cardIcon}>
-              <i className="bi bi-geo-alt" style={{ color: '#6366f1' }}></i>
-            </div>
-            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>New Public Issue</h4>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Pin details on maps</p>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Report Civic Issue</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Upload photo to file AI complaint</p>
           </div>
 
           <div style={styles.card} onClick={() => router.push('/user/toilet-tracker')} className="dashboard-card">
@@ -175,31 +215,7 @@ const UserDashboard = () => {
               <i className="bi bi-person-standing" style={{ color: '#6366f1' }}></i>
             </div>
             <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Toilet Tracker</h4>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Find nearest Swachh Toilet</p>
-          </div>
-
-          <div style={styles.card} onClick={() => router.push('/user/feedback')} className="dashboard-card">
-            <div style={styles.cardIcon}>
-              <i className="bi bi-chat-dots" style={{ color: '#6366f1' }}></i>
-            </div>
-            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Give Feedback</h4>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Share ideas for betterment</p>
-          </div>
-
-          <div style={styles.card} onClick={() => router.push('/user/alerts')} className="dashboard-card">
-            <div style={styles.cardIcon}>
-              <i className="bi bi-exclamation-triangle" style={{ color: '#6366f1' }}></i>
-            </div>
-            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Active Alerts</h4>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Water & Road advisories</p>
-          </div>
-
-          <div style={styles.card} onClick={() => router.push('/user/info')} className="dashboard-card">
-            <div style={styles.cardIcon}>
-              <i className="bi bi-info-circle" style={{ color: '#6366f1' }}></i>
-            </div>
-            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Info Center</h4>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Citizen charter & directory</p>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Find & report nearest Swachh Toilet</p>
           </div>
 
           <div style={styles.card} onClick={() => router.push('/how-to-use')} className="dashboard-card">
@@ -216,14 +232,6 @@ const UserDashboard = () => {
             </div>
             <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Contact Support</h4>
             <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Report bugs or ask help</p>
-          </div>
-
-          <div style={styles.card} onClick={() => router.push('/user/settings')} className="dashboard-card">
-            <div style={styles.cardIcon}>
-              <i className="bi bi-gear" style={{ color: '#6366f1' }}></i>
-            </div>
-            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Settings</h4>
-            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineStyle: '1.4' }}>Toggle alert preferences</p>
           </div>
         </div>
 

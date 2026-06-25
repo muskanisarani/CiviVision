@@ -12,6 +12,8 @@ const UserRegister = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   
@@ -25,7 +27,7 @@ const UserRegister = () => {
       setAlertMessage('Passwords do not match. Please verify and try again.');
       return;
     }
-    const success = registerUser(name, email, mobile, password);
+    const success = registerUser(name, email, mobile, password, city, state);
     if (success) {
       router.push('/user/login');
     }
@@ -69,6 +71,30 @@ const UserRegister = () => {
               placeholder="10-digit number"
               value={mobile}
               onChange={(e) => setMobile(e.target.value.replace(/[^0-9]/g, ''))}
+              required
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">City</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="e.g. Gandhinagar"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">State</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="e.g. Gujarat"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
               required
             />
           </div>

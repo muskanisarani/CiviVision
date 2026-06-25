@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import UserBottomNav from '../../components/UserBottomNav';
 
 const Notifications = () => {
   const router = useRouter();
@@ -162,7 +163,7 @@ const Notifications = () => {
   };
 
   return (
-    <div style={styles.body}>
+    <div style={styles.body} className="user-notifications-body">
       <div style={styles.container}>
         <div style={styles.header}>
           <div style={styles.titleSection}>
@@ -206,6 +207,7 @@ const Notifications = () => {
           background-color: rgba(255, 255, 255, 0.75) !important;
         }
       `}</style>
+      <UserBottomNav />
     </div>
   );
 };

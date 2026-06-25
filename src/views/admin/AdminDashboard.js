@@ -9,9 +9,70 @@ const AdminDashboard = () => {
   const mapRef = useRef(null);
   const [alertMessage, setAlertMessage] = useState(null);
 
+  const [complaints, setComplaints] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
+
   const handleLogout = () => {
     logout();
     router.push('/select-role');
+  };
+
+  useEffect(() => {
+    // Read complaints from local storage or set defaults
+    const saved = JSON.parse(localStorage.getItem('complaints') || '[]');
+    if (saved.length === 0) {
+      const defaults = [
+        { id: '#001', category: 'Garbage Overflow', location: 'Market Area', status: 'Pending', date: '12 Jan 2026', description: 'Large garbage heap blocking secondary market road.' },
+        { id: '#002', category: 'Broken Streetlight', location: 'Sector 9', status: 'In Progress', date: '10 Jan 2026', description: 'Streetlight pole GMC-204 flickering repeatedly at night.' },
+        { id: '#003', category: 'Water Leakage', location: 'Main Road', status: 'Resolved', date: '08 Jan 2026', description: 'Drinking water pipeline leakage producing water wastage.', feedback: { rating: 5, comment: 'Quick repair done within 12 hours. Excellent work!' } }
+      ];
+      localStorage.setItem('complaints', JSON.stringify(defaults));
+      setComplaints(defaults);
+    } else {
+      setComplaints(saved);
+    }
+
+    // Read feedbacks
+    const savedFeedbacks = JSON.parse(localStorage.getItem('citizenFeedbacks') || '[]');
+    if (savedFeedbacks.length === 0) {
+      const defaultFeedbacks = [
+        { id: 'fb-1', name: 'Ramesh K. (Sector 12)', rating: 5, comment: 'Awesome response! Garbage reported yesterday was cleared within 3 hours. Great initiative.', date: '12 Jan 2026' },
+        { id: 'fb-2', name: 'Anjali P. (Ahmedabad)', rating: 5, comment: 'The toilet tracker app is very useful near Bus Stand. It showed Clean status and it was indeed very tidy.', date: '10 Jan 2026' }
+      ];
+      localStorage.setItem('citizenFeedbacks', JSON.stringify(defaultFeedbacks));
+      setFeedbacks(defaultFeedbacks);
+    } else {
+      setFeedbacks(savedFeedbacks);
+    }
+  }, []);
+
+  const handleUpdateStatus = (complaintId, newStatus) => {
+    const updated = complaints.map(c => {
+      if (c.id === complaintId) {
+        return { ...c, status: newStatus };
+      }
+      return c;
+    });
+    setComplaints(updated);
+    localStorage.setItem('complaints', JSON.stringify(updated));
+
+    // Also trigger user notification alert
+    const currentNotifications = JSON.parse(localStorage.getItem('userNotifications') || '[]');
+    const targetComp = complaints.find(c => c.id === complaintId);
+    currentNotifications.unshift({
+      id: `notif-${Date.now()}`,
+      title: `Complaint Status Updated`,
+      body: `Your complaint for "${targetComp ? targetComp.category : 'issue'}" has been updated to "${newStatus}".`,
+      date: 'Just now',
+      unread: true
+    });
+    localStorage.setItem('userNotifications', JSON.stringify(currentNotifications));
+
+    // Update feedback feed in case it changed to Resolved
+    const savedFeedbacks = JSON.parse(localStorage.getItem('citizenFeedbacks') || '[]');
+    setFeedbacks(savedFeedbacks);
+
+    setAlertMessage(`Complaint ${complaintId} status updated to "${newStatus}"! Notification sent to the citizen.`);
   };
 
   useEffect(() => {
@@ -31,13 +92,13 @@ const AdminDashboard = () => {
         ]
       });
 
-      const complaints = [
+      const mapComplaints = [
         { lat: 23.2156, lng: 72.6369, title: 'Garbage Overflow – Gandhinagar', status: 'Pending' },
         { lat: 23.0225, lng: 72.5714, title: 'Broken Streetlight – Ahmedabad', status: 'Resolved' },
         { lat: 23.5879, lng: 72.3693, title: 'Pothole – Mehsana', status: 'In Progress' }
       ];
 
-      complaints.forEach(c => {
+      mapComplaints.forEach(c => {
         const marker = new window.google.maps.Marker({
           position: { lat: c.lat, lng: c.lng },
           map,
@@ -76,26 +137,40 @@ const AdminDashboard = () => {
 
   const styles = {
     body: {
-      minHeight: '100vh',
-      maxWidth: '1000px',
-      margin: '0 auto',
-      width: '100%',
+      minHeight: 'calc(100vh - 150px)',
+      fontFamily: '"Segoe UI", sans-serif',
+      padding: '40px 20px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
     },
-    topbar: {
-      backgroundColor: 'rgba(255, 255, 255, 0.6)',
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
-      borderBottom: '1px solid rgba(15, 23, 42, 0.08)',
-      color: '#0f172a',
-      padding: '16px 24px',
-      fontWeight: '800',
-      fontSize: '1.25rem',
-      letterSpacing: '-0.5px',
-      borderBottomLeftRadius: '24px',
-      borderBottomRightRadius: '24px',
+    container: {
+      maxWidth: '1000px',
+      width: '100%',
+      backgroundColor: 'rgba(255, 255, 255, 0.55)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      border: '1px solid rgba(15, 23, 42, 0.08)',
+      borderRadius: '24px',
+      padding: '40px 30px',
+      boxShadow: '0 20px 45px rgba(15, 23, 42, 0.05)',
+    },
+    header: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
+      marginBottom: '30px',
+      borderBottom: '1px solid rgba(15, 23, 42, 0.08)',
+      paddingBottom: '20px',
+    },
+    title: {
+      margin: '0',
+      fontSize: '28px',
+      fontWeight: '800',
+      letterSpacing: '-0.5px',
+      background: 'linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
     },
     card: {
       backgroundColor: 'rgba(255, 255, 255, 0.55)',
@@ -130,51 +205,55 @@ const AdminDashboard = () => {
     }
   };
 
+  const resolvedCount = complaints.filter(c => c.status === 'Resolved').length;
+  const progressCount = complaints.filter(c => c.status === 'In Progress').length;
+  const pendingCount = complaints.filter(c => c.status === 'Pending').length;
+
   return (
     <div style={styles.body}>
-      {/* TOP BAR */}
-      <div style={styles.topbar}>
-        <span>Admin Control Board</span>
-        <button 
-          style={{
-            background: 'rgba(15, 23, 42, 0.05)',
-            border: '1px solid rgba(15, 23, 42, 0.1)',
-            borderRadius: '8px',
-            color: '#475569',
-            fontSize: '13px',
-            fontWeight: '600',
-            padding: '6px 12px',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-          }}
-          className="admin-settings-btn"
-          onClick={() => router.push('/admin/settings')}
-        >
-          ⚙️ System Settings
-        </button>
-      </div>
+      <div style={styles.container}>
+        {/* HEADER */}
+        <div style={styles.header}>
+          <h2 style={styles.title}>Admin Control Board</h2>
+          <button 
+            style={{
+              background: 'rgba(15, 23, 42, 0.05)',
+              border: '1px solid rgba(15, 23, 42, 0.1)',
+              borderRadius: '8px',
+              color: '#475569',
+              fontSize: '13px',
+              fontWeight: '600',
+              padding: '6px 12px',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            className="admin-settings-btn"
+            onClick={() => router.push('/admin/settings')}
+          >
+            ⚙️ System Settings
+          </button>
+        </div>
 
-      <div className="container my-4">
         {/* DASHBOARD STATS */}
         <div className="row g-3 text-center mb-4">
           <div className="col-md-4">
             <div style={styles.card}>
               <h5 style={{ fontSize: '14px', color: '#475569', fontWeight: '600', marginBottom: '8px' }}>Resolved</h5>
-              <div style={{ ...styles.statusNumber, color: '#10b981' }}>25</div>
+              <div style={{ ...styles.statusNumber, color: '#10b981' }}>{resolvedCount}</div>
             </div>
           </div>
 
           <div className="col-md-4">
             <div style={styles.card}>
               <h5 style={{ fontSize: '14px', color: '#475569', fontWeight: '600', marginBottom: '8px' }}>In Progress</h5>
-              <div style={{ ...styles.statusNumber, color: '#2563eb' }}>12</div>
+              <div style={{ ...styles.statusNumber, color: '#2563eb' }}>{progressCount}</div>
             </div>
           </div>
 
           <div className="col-md-4">
             <div style={styles.card}>
               <h5 style={{ fontSize: '14px', color: '#475569', fontWeight: '600', marginBottom: '8px' }}>Pending</h5>
-              <div style={{ ...styles.statusNumber, color: '#d97706' }}>8</div>
+              <div style={{ ...styles.statusNumber, color: '#d97706' }}>{pendingCount}</div>
             </div>
           </div>
         </div>
@@ -184,19 +263,19 @@ const AdminDashboard = () => {
           <div className="col-6 col-md-4">
             <div style={styles.card}>
               <h5 style={{ fontSize: '13px', color: '#64748b', fontWeight: '600', marginBottom: '8px' }}>Avg Resolution Time</h5>
-              <div style={{ ...styles.statusNumber, color: '#4f46e5', fontSize: '1.5rem' }}>4.2 Hrs</div>
+              <div style={{ ...styles.statusNumber, color: '#4f46e5', fontSize: '1.5rem' }}>3.8 Hrs</div>
             </div>
           </div>
           <div className="col-6 col-md-4">
             <div style={styles.card}>
               <h5 style={{ fontSize: '13px', color: '#64748b', fontWeight: '600', marginBottom: '8px' }}>Citizen Satisfaction (CSAT)</h5>
-              <div style={{ ...styles.statusNumber, color: '#06b6d4', fontSize: '1.5rem' }}>94.6%</div>
+              <div style={{ ...styles.statusNumber, color: '#06b6d4', fontSize: '1.5rem' }}>96.2%</div>
             </div>
           </div>
           <div className="col-12 col-md-4">
             <div style={styles.card}>
               <h5 style={{ fontSize: '13px', color: '#64748b', fontWeight: '600', marginBottom: '8px' }}>Sanitation Dispatch Crews</h5>
-              <div style={{ ...styles.statusNumber, color: '#10b981', fontSize: '1.5rem' }}>18 Active</div>
+              <div style={{ ...styles.statusNumber, color: '#10b981', fontSize: '1.5rem' }}>20 Active</div>
             </div>
           </div>
         </div>
@@ -212,51 +291,59 @@ const AdminDashboard = () => {
                   <th style={{ backgroundColor: 'transparent', color: '#64748b', fontSize: '13px' }}>Category</th>
                   <th style={{ backgroundColor: 'transparent', color: '#64748b', fontSize: '13px' }}>Location</th>
                   <th style={{ backgroundColor: 'transparent', color: '#64748b', fontSize: '13px' }}>Status</th>
-                  <th style={{ backgroundColor: 'transparent', color: '#64748b', fontSize: '13px' }}>Dispatch Action</th>
+                  <th style={{ backgroundColor: 'transparent', color: '#64748b', fontSize: '13px' }}>Dispatch Action / Update Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td style={{ backgroundColor: 'transparent' }}>#001</td>
-                  <td style={{ backgroundColor: 'transparent' }}>Garbage Overflow</td>
-                  <td style={{ backgroundColor: 'transparent' }}>Gandhinagar</td>
-                  <td style={{ backgroundColor: 'transparent' }}><span className="badge bg-warning text-dark">Pending</span></td>
-                  <td style={{ backgroundColor: 'transparent' }}>
-                    <select className="form-select form-select-sm" style={{ maxWidth: '180px', fontSize: '12px', padding: '4px 8px', background: 'rgba(255,255,255,0.7)' }} onChange={(e) => {
-                      if(e.target.value) setAlertMessage(`🚛 Dispatch orders sent: "${e.target.value}" has been assigned to Garbage Overflow ID #001.`);
-                    }}>
-                      <option value="">-- Assign Crew --</option>
-                      <option value="SBM Clean Zone 4 GMC">SBM Clean Zone 4 GMC</option>
-                      <option value="Road Repair Crew Zone-2">Road Repair Crew Zone-2</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ backgroundColor: 'transparent' }}>#002</td>
-                  <td style={{ backgroundColor: 'transparent' }}>Broken Streetlight</td>
-                  <td style={{ backgroundColor: 'transparent' }}>Ahmedabad</td>
-                  <td style={{ backgroundColor: 'transparent' }}><span className="badge bg-success">Resolved</span></td>
-                  <td style={{ backgroundColor: 'transparent' }}>
-                    <select className="form-select form-select-sm" style={{ maxWidth: '180px', fontSize: '12px', padding: '4px 8px', background: 'rgba(255,255,255,0.7)' }} disabled>
-                      <option value="">Assigned: GMC Electra</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ backgroundColor: 'transparent' }}>#003</td>
-                  <td style={{ backgroundColor: 'transparent' }}>Pothole</td>
-                  <td style={{ backgroundColor: 'transparent' }}>Mehsana</td>
-                  <td style={{ backgroundColor: 'transparent' }}><span className="badge bg-primary">In Progress</span></td>
-                  <td style={{ backgroundColor: 'transparent' }}>
-                    <select className="form-select form-select-sm" style={{ maxWidth: '180px', fontSize: '12px', padding: '4px 8px', background: 'rgba(255,255,255,0.7)' }} onChange={(e) => {
-                      if(e.target.value) setAlertMessage(`🚛 Dispatch orders sent: "${e.target.value}" has been assigned to Pothole ID #003.`);
-                    }}>
-                      <option value="">-- Assign Crew --</option>
-                      <option value="Mehsana Paving Unit 8">Mehsana Paving Unit 8</option>
-                      <option value="Zone 9 Drainage Operations">Zone 9 Drainage Operations</option>
-                    </select>
-                  </td>
-                </tr>
+                {complaints.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="text-center" style={{ backgroundColor: 'transparent', color: '#64748b', padding: '20px' }}>
+                      No active complaints found in system database.
+                    </td>
+                  </tr>
+                ) : (
+                  complaints.map(c => (
+                    <tr key={c.id}>
+                      <td style={{ backgroundColor: 'transparent', fontWeight: '700', fontSize: '13px' }}>{c.id}</td>
+                      <td style={{ backgroundColor: 'transparent' }}>{c.category}</td>
+                      <td style={{ backgroundColor: 'transparent' }}>{c.location}</td>
+                      <td style={{ backgroundColor: 'transparent' }}>
+                        <span className={`badge ${
+                          c.status === 'Resolved' ? 'bg-success' : c.status === 'In Progress' ? 'bg-primary' : 'bg-warning text-dark'
+                        }`}>
+                          {c.status}
+                        </span>
+                      </td>
+                      <td style={{ backgroundColor: 'transparent' }}>
+                        <div className="d-flex gap-2 align-items-center">
+                          <select 
+                            className="form-select form-select-sm" 
+                            style={{ maxWidth: '130px', fontSize: '12px', padding: '4px 8px', background: 'rgba(255,255,255,0.7)', borderRadius: '8px' }}
+                            value={c.status}
+                            onChange={(e) => handleUpdateStatus(c.id, e.target.value)}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                          </select>
+                          <select 
+                            className="form-select form-select-sm" 
+                            style={{ maxWidth: '145px', fontSize: '12px', padding: '4px 8px', background: 'rgba(255,255,255,0.7)', borderRadius: '8px' }} 
+                            onChange={(e) => {
+                              if(e.target.value) setAlertMessage(`🚛 Dispatch orders sent: "${e.target.value}" has been assigned to Complaint ID ${c.id}.`);
+                            }}
+                          >
+                            <option value="">-- Assign Crew --</option>
+                            <option value="SBM Clean Zone 4 GMC">SBM Clean Zone 4 GMC</option>
+                            <option value="Road Repair Crew Zone-2">Road Repair Crew Zone-2</option>
+                            <option value="GMC Electra squad">GMC Electra squad</option>
+                            <option value="Toilet Sanitation Unit C">Toilet Sanitation Unit C</option>
+                          </select>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -272,20 +359,24 @@ const AdminDashboard = () => {
         <div style={{ ...styles.card, marginBottom: '24px' }}>
           <h5 className="text-center mb-3" style={{ fontWeight: '700', fontSize: '16px', color: '#0f172a' }}>Real-time Citizen Feedback Feed</h5>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '200px', overflowY: 'auto', paddingRight: '8px' }}>
-            <div style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid rgba(15, 23, 42, 0.05)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <strong style={{ fontSize: '13px', color: '#1e293b' }}>Ramesh K. (Sector 12)</strong>
-                <span style={{ fontSize: '12px', color: '#eab308' }}>⭐⭐⭐⭐⭐</span>
+            {feedbacks.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '20px', color: '#64748b', fontSize: '13px' }}>
+                No citizen reviews received yet.
               </div>
-              <p style={{ margin: 0, fontSize: '12px', color: '#475569' }}>"Awesome response! Garbage reported yesterday in Sector 12 was cleared within 3 hours. Great initiative by GMC."</p>
-            </div>
-            <div style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid rgba(15, 23, 42, 0.05)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <strong style={{ fontSize: '13px', color: '#1e293b' }}>Anjali P. (Ahmedabad)</strong>
-                <span style={{ fontSize: '12px', color: '#eab308' }}>⭐⭐⭐⭐⭐</span>
-              </div>
-              <p style={{ margin: 0, fontSize: '12px', color: '#475569' }}>"The toilet tracker app is very useful near Bus Stand. It showed Clean status and it was indeed very tidy."</p>
-            </div>
+            ) : (
+              feedbacks.map((f, i) => (
+                <div key={f.id || i} style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.4)', borderRadius: '12px', border: '1px solid rgba(15, 23, 42, 0.05)' }}>
+                  <div style={{ display: 'flex', justifySelf: 'stretch', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <strong style={{ fontSize: '13px', color: '#1e293b' }}>{f.name}</strong>
+                    <span style={{ fontSize: '12px', color: '#eab308' }}>
+                      {'★'.repeat(f.rating)}{'☆'.repeat(5 - f.rating)}
+                    </span>
+                  </div>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#475569' }}>"{f.comment}"</p>
+                  <span style={{ fontSize: '10px', color: '#94a3b8', display: 'block', marginTop: '4px', textAlign: 'right' }}>{f.date}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -296,8 +387,6 @@ const AdminDashboard = () => {
           </button>
         </div>
       </div>
-
-
 
       {/* CUSTOM ALERT MODAL */}
       {alertMessage && (
