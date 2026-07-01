@@ -7,48 +7,48 @@ const Notifications = () => {
   const router = useRouter();
   const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('userNotifications') || '[]');
-    if (saved.length === 0) {
-      const defaults = [
-        {
-          id: 'notif-1',
-          title: '🔧 Issue Scheduled for Repair',
-          body: 'GMC Ward 2 Electrical Crew has checked your report #002 (Broken Streetlight) and scheduled the bulb replacement.',
-          date: '2 hours ago',
-          unread: true
-        },
-        {
-          id: 'notif-2',
-          title: '✅ Complaint Resolved Successfully',
-          body: 'GMC Water Engineers have repaired the pipeline leak reported in #003. Thank you for reporting!',
-          date: 'Yesterday',
-          unread: false
-        },
-        {
-          id: 'notif-3',
-          title: '🚨 Emergency Dispatch Confirmation',
-          body: 'Immediate drainage crew dispatched to report #009 (Flooded Roadway). Resolving target within 2 hours.',
-          date: '3 days ago',
-          unread: false
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch('/api/notifications');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          const mapped = data.notifications.map(n => ({
+            id: n.id,
+            title: n.title,
+            body: n.message,
+            unread: !n.read,
+            date: new Date(n.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+          }));
+          setNotifications(mapped);
         }
-      ];
-      localStorage.setItem('userNotifications', JSON.stringify(defaults));
-      setNotifications(defaults);
-    } else {
-      setNotifications(saved);
+      }
+    } catch (error) {
+      console.error('Fetch notifications error:', error);
     }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
   }, []);
 
-  const markAllAsRead = () => {
-    const updated = notifications.map(n => ({ ...n, unread: false }));
-    localStorage.setItem('userNotifications', JSON.stringify(updated));
-    setNotifications(updated);
+  const markAllAsRead = async () => {
+    try {
+      const response = await fetch('/api/notifications', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ all: true })
+      });
+      if (response.ok) {
+        await fetchNotifications();
+      }
+    } catch (error) {
+      console.error('Mark all as read error:', error);
+    }
   };
 
   const clearNotifications = () => {
-    localStorage.setItem('userNotifications', JSON.stringify([]));
-    setNotifications([]);
+    markAllAsRead();
   };
 
   const styles = {

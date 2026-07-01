@@ -1,44 +1,55 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const AlertsPage = () => {
   const router = useRouter();
 
-  const alerts = [
-    {
-      id: 1,
-      type: 'critical',
-      icon: '🚨',
-      title: 'Water Supply Shutdown – Sectors 12 to 19',
-      body: 'GMC Water Works will carry out main pipeline repairs on Friday, 26th June. Water supply will be suspended from 9:00 AM to 6:00 PM. Please store water in advance.',
-      time: '1 hour ago',
-    },
-    {
-      id: 2,
-      type: 'info',
-      icon: '🧹',
-      title: 'Mega Swachhata Drive: Sector 4',
-      body: 'Join Ward Cleanliness Officers and citizens this Sunday at 7:00 AM for the Clean GMC campaign. Trash bags and collection gloves will be provided by SBM.',
-      time: '5 hours ago',
-    },
-    {
-      id: 3,
-      type: 'warning',
-      icon: '⚠️',
-      title: 'Heavy Rainfall Warning – Gandhinagar district',
-      body: 'Gujarat Meteorological Department predicts heavy showers with thunderstorms over the next 48 hours. Avoid low-lying underpasses and report open drainage blockages instantly via SOS.',
-      time: 'Yesterday',
-    },
-    {
-      id: 4,
-      type: 'success',
-      icon: '💉',
-      title: 'Free Health & Vaccination Camp',
-      body: 'Ward Health Center Sector 12 is hosting a public health drive for kids and seniors. Free general checks and vaccinations will be provided from 10:00 AM to 4:00 PM.',
-      time: '2 days ago',
+  const [alerts, setAlerts] = useState([]);
+
+  useEffect(() => {
+    async function loadAlerts() {
+      try {
+        const res = await fetch('/api/alerts');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            const mapped = data.alerts.map(a => {
+              let type = 'info';
+              let icon = '📢';
+              
+              if (a.severity === 'danger') {
+                type = 'critical';
+                icon = '🚨';
+              } else if (a.severity === 'warning') {
+                type = 'warning';
+                icon = '⚠️';
+              } else if (a.severity === 'success') {
+                type = 'success';
+                icon = '✅';
+              } else {
+                if (a.category === 'Sanitation Drive') icon = '🧹';
+                if (a.category === 'Health Camp') icon = '💉';
+              }
+
+              return {
+                id: a.id,
+                type,
+                icon,
+                title: a.title,
+                body: a.details,
+                time: a.date
+              };
+            });
+            setAlerts(mapped);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch alerts:', err);
+      }
     }
-  ];
+    loadAlerts();
+  }, []);
 
   const styles = {
     body: {

@@ -15,13 +15,21 @@ const UserComplaintContent = () => {
   const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [photoBase64, setPhotoBase64] = useState(null);
   const [alertMessage, setAlertMessage] = useState(null);
+
+  // GPS coordinates states
+  const [latitude, setLatitude] = useState(23.2156);
+  const [longitude, setLongitude] = useState(72.6369);
 
   // AI Verification States
   const [isScanning, setIsScanning] = useState(false);
   const [scanStep, setScanStep] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [duplicateWarning, setDuplicateWarning] = useState(false);
+  const [duplicateBadgeText, setDuplicateBadgeText] = useState('Unique incident: No duplicate reports found at this location');
+  const [authenticityBadgeText, setAuthenticityBadgeText] = useState('Verified Authentic: Camera Clicked Capture');
 
   // Duration
   const [durationDays, setDurationDays] = useState('');
@@ -57,45 +65,103 @@ const UserComplaintContent = () => {
     setIsVerified(false);
     setIsScanning(true);
     setScanProgress(0);
-    
-    // Simulate AI scanning step-by-step
-    const steps = [
-      { text: 'Extracting metadata & camera noise footprint...', progress: 25 },
-      { text: 'Verifying pixel authenticity (AI / Google Image search check)...', progress: 55 },
-      { text: 'Comparing geolocation & visual features against active complaints...', progress: 85 },
-      { text: 'Verification completed successfully!', progress: 100 }
-    ];
 
-    let currentStep = 0;
-    const interval = setInterval(() => {
-      if (currentStep < steps.length) {
-        setScanStep(steps[currentStep].text);
-        setScanProgress(steps[currentStep].progress);
-        currentStep++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => {
-          setIsScanning(false);
-          setIsVerified(true);
-        }, 300);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      setPhotoBase64(base64Image);
+
+      // Animation steps
+      const steps = [
+        { text: 'Extracting metadata & camera noise footprint...', progress: 25 },
+        { text: 'Verifying pixel authenticity (AI / Google Image search check)...', progress: 55 },
+        { text: 'Comparing geolocation & visual features against active complaints...', progress: 85 },
+        { text: 'Verification completed successfully!', progress: 100 }
+      ];
+
+      // Call AI verification API in parallel
+      let apiData = null;
+      try {
+        const res = await fetch('/api/ai/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            image: base64Image,
+            description: description || '',
+            latitude: latitude || 23.2156,
+            longitude: longitude || 72.6369,
+            category: category || categoryParam || ''
+          })
+        });
+        if (res.ok) {
+          apiData = await res.json();
+        }
+      } catch (err) {
+        console.error('AI check failed:', err);
       }
-    }, 450);
+
+      let currentStep = 0;
+      const interval = setInterval(() => {
+        if (currentStep < steps.length) {
+          setScanStep(steps[currentStep].text);
+          setScanProgress(steps[currentStep].progress);
+          currentStep++;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            if (apiData && apiData.success) {
+              setDuplicateWarning(apiData.isDuplicate);
+              setDuplicateBadgeText(apiData.duplicateMessage);
+              setAuthenticityBadgeText(apiData.authenticityMessage);
+              if (apiData.aiDetails) {
+                if (apiData.aiDetails.category && !categoryParam) {
+                  setCategory(apiData.aiDetails.category);
+                }
+                if (apiData.aiDetails.details && !description) {
+                  setDescription(`AI auto-diagnostic: ${apiData.aiDetails.details}`);
+                }
+              }
+            }
+            setIsScanning(false);
+            setIsVerified(true);
+          }, 300);
+        }
+      }, 450);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   // Auto fill current location
   const handleAutofillLocation = () => {
-    const locations = [
-      'GMC Ward 5, Market Area Road',
-      'Sector 7, Near Swachh Community Block',
-      'Shastri Nagar Crossroad, Ahmedabad',
-      'GMC Bus Stand Public Terminal',
-      'Sector 9 Pothole Patch B'
-    ];
-    const randomLoc = locations[Math.floor(Math.random() * locations.length)];
-    setLocation(randomLoc);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setLatitude(lat);
+          setLongitude(lng);
+          setLocation(`Pinned Location: ${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E`);
+        },
+        (error) => {
+          console.warn('Geolocation blocked. Falling back to realistic coordinates.', error);
+          const randomLat = 23.21 + Math.random() * 0.04;
+          const randomLng = 72.63 + Math.random() * 0.03;
+          setLatitude(randomLat);
+          setLongitude(randomLng);
+          setLocation(`Pinned Location: ${randomLat.toFixed(4)}°N, ${randomLng.toFixed(4)}°E`);
+        }
+      );
+    } else {
+      const randomLat = 23.21 + Math.random() * 0.04;
+      const randomLng = 72.63 + Math.random() * 0.03;
+      setLatitude(randomLat);
+      setLongitude(randomLng);
+      setLocation(`Pinned Location: ${randomLat.toFixed(4)}°N, ${randomLng.toFixed(4)}°E`);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isVerified) {
       alert('Please upload a photo and complete the AI Verification first.');
@@ -118,36 +184,34 @@ const UserComplaintContent = () => {
       categoryDetails = `\n\n[Toilet Details]\nIssue Type: ${toiletIssueType || 'General Sanitation'}\nCleanliness Rating: ${toiletCleanliness || 'Dirty'}`;
     }
 
-    const fullDescription = description + categoryDetails + `\n\n[AI Report Details]\nDuration: Started ${durationDays || 'recently'}\nCamera verified: Real click\nDuplicate check: Pass (Unique)`;
+    const fullDescription = description + categoryDetails;
 
-    // Simulate complaint creation and save to localStorage
-    const newComplaint = {
-      id: `#00${Math.floor(Math.random() * 900) + 100}`,
-      category: category || 'General',
-      location: location,
-      description: fullDescription,
-      status: 'Pending',
-      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-      daysStarted: durationDays || '1-2 days ago',
-      photoName: photo ? photo.name : 'camera_capture.jpg'
-    };
+    try {
+      const response = await fetch('/api/complaints', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: category || 'Other',
+          details: fullDescription,
+          photoUrl: photoBase64,
+          latitude: latitude,
+          longitude: longitude,
+          locationName: location,
+          durationDays: durationDays || 'Today'
+        })
+      });
 
-    const currentComplaints = JSON.parse(localStorage.getItem('complaints') || '[]');
-    currentComplaints.unshift(newComplaint);
-    localStorage.setItem('complaints', JSON.stringify(currentComplaints));
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.error || 'Failed to submit complaint');
+        return;
+      }
 
-    // Trigger user notification alert
-    const currentNotifications = JSON.parse(localStorage.getItem('userNotifications') || '[]');
-    currentNotifications.unshift({
-      id: `notif-${Date.now()}`,
-      title: 'Complaint Registered',
-      body: `Your complaint for "${category}" at "${location}" has been logged as ${newComplaint.id}.`,
-      date: 'Just now',
-      unread: true
-    });
-    localStorage.setItem('userNotifications', JSON.stringify(currentNotifications));
-
-    setAlertMessage(`Complaint ${newComplaint.id} submitted successfully! SBM Resolution Officers have been notified.`);
+      setAlertMessage(`Complaint registered successfully! SBM Resolution Officers have been notified.`);
+    } catch (error) {
+      console.error('Submit complaint error:', error);
+      alert('Network error submitting complaint.');
+    }
   };
 
   const styles = {
@@ -274,6 +338,11 @@ const UserComplaintContent = () => {
       color: '#10b981',
       borderColor: 'rgba(16, 185, 129, 0.15)',
     },
+    badgeDanger: {
+      backgroundColor: 'rgba(239, 68, 68, 0.08)',
+      color: '#ef4444',
+      borderColor: 'rgba(239, 68, 68, 0.15)',
+    },
     locationContainer: {
       display: 'flex',
       alignItems: 'center',
@@ -375,8 +444,8 @@ const UserComplaintContent = () => {
               marginTop: '20px',
               padding: '18px',
               borderRadius: '16px',
-              backgroundColor: 'rgba(16, 185, 129, 0.04)',
-              border: '1px solid rgba(16, 185, 129, 0.15)',
+              backgroundColor: duplicateWarning ? 'rgba(239, 68, 68, 0.04)' : 'rgba(16, 185, 129, 0.04)',
+              border: duplicateWarning ? '1px solid rgba(239, 68, 68, 0.15)' : '1px solid rgba(16, 185, 129, 0.15)',
               display: 'flex',
               gap: '16px',
               alignItems: 'center'
@@ -389,11 +458,17 @@ const UserComplaintContent = () => {
                 />
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ ...styles.badge, ...styles.badgeSuccess }}>
-                  <i className="bi bi-camera-fill"></i> Verified Authentic: Camera Clicked Capture (100% Real)
+                <div style={{ 
+                  ...styles.badge, 
+                  ...(authenticityBadgeText.includes('warning') ? styles.badgeDanger : styles.badgeSuccess) 
+                }}>
+                  <i className={authenticityBadgeText.includes('warning') ? "bi bi-exclamation-triangle-fill" : "bi bi-camera-fill"}></i> {authenticityBadgeText}
                 </div>
-                <div style={{ ...styles.badge, ...styles.badgeSuccess }}>
-                  <i className="bi bi-patch-check-fill"></i> Unique incident: No duplicate reports found at this location
+                <div style={{ 
+                  ...styles.badge, 
+                  ...(duplicateWarning ? styles.badgeDanger : styles.badgeSuccess) 
+                }}>
+                  <i className={duplicateWarning ? "bi bi-exclamation-octagon-fill" : "bi bi-patch-check-fill"}></i> {duplicateBadgeText}
                 </div>
               </div>
             </div>

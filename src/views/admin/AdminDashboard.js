@@ -17,62 +17,62 @@ const AdminDashboard = () => {
     router.push('/select-role');
   };
 
-  useEffect(() => {
-    // Read complaints from local storage or set defaults
-    const saved = JSON.parse(localStorage.getItem('complaints') || '[]');
-    if (saved.length === 0) {
-      const defaults = [
-        { id: '#001', category: 'Garbage Overflow', location: 'Market Area', status: 'Pending', date: '12 Jan 2026', description: 'Large garbage heap blocking secondary market road.' },
-        { id: '#002', category: 'Broken Streetlight', location: 'Sector 9', status: 'In Progress', date: '10 Jan 2026', description: 'Streetlight pole GMC-204 flickering repeatedly at night.' },
-        { id: '#003', category: 'Water Leakage', location: 'Main Road', status: 'Resolved', date: '08 Jan 2026', description: 'Drinking water pipeline leakage producing water wastage.', feedback: { rating: 5, comment: 'Quick repair done within 12 hours. Excellent work!' } }
-      ];
-      localStorage.setItem('complaints', JSON.stringify(defaults));
-      setComplaints(defaults);
-    } else {
-      setComplaints(saved);
-    }
+  const fetchComplaints = async () => {
+    try {
+      const response = await fetch('/api/complaints');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          const mapped = data.complaints.map(c => ({
+            ...c,
+            date: new Date(c.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+            location: c.locationName || 'Pinned Location',
+            description: c.details
+          }));
+          setComplaints(mapped);
 
-    // Read feedbacks
-    const savedFeedbacks = JSON.parse(localStorage.getItem('citizenFeedbacks') || '[]');
-    if (savedFeedbacks.length === 0) {
-      const defaultFeedbacks = [
-        { id: 'fb-1', name: 'Ramesh K. (Sector 12)', rating: 5, comment: 'Awesome response! Garbage reported yesterday was cleared within 3 hours. Great initiative.', date: '12 Jan 2026' },
-        { id: 'fb-2', name: 'Anjali P. (Ahmedabad)', rating: 5, comment: 'The toilet tracker app is very useful near Bus Stand. It showed Clean status and it was indeed very tidy.', date: '10 Jan 2026' }
-      ];
-      localStorage.setItem('citizenFeedbacks', JSON.stringify(defaultFeedbacks));
-      setFeedbacks(defaultFeedbacks);
-    } else {
-      setFeedbacks(savedFeedbacks);
+          // Extract actual feedbacks from resolved reviews
+          const reviews = data.complaints
+            .filter(c => c.rating !== null)
+            .map(c => ({
+              id: `fb-${c.id}`,
+              name: `${c.user?.name || 'Citizen'} (${c.locationName || 'Pinned Location'})`,
+              rating: c.rating,
+              comment: c.comment,
+              date: new Date(c.updatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+            }));
+          setFeedbacks(reviews);
+        }
+      }
+    } catch (error) {
+      console.error('Fetch complaints error:', error);
     }
+  };
+
+  useEffect(() => {
+    fetchComplaints();
   }, []);
 
-  const handleUpdateStatus = (complaintId, newStatus) => {
-    const updated = complaints.map(c => {
-      if (c.id === complaintId) {
-        return { ...c, status: newStatus };
+  const handleUpdateStatus = async (complaintId, newStatus) => {
+    try {
+      const response = await fetch(`/api/complaints/${complaintId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.error || 'Failed to update status');
+        return;
       }
-      return c;
-    });
-    setComplaints(updated);
-    localStorage.setItem('complaints', JSON.stringify(updated));
 
-    // Also trigger user notification alert
-    const currentNotifications = JSON.parse(localStorage.getItem('userNotifications') || '[]');
-    const targetComp = complaints.find(c => c.id === complaintId);
-    currentNotifications.unshift({
-      id: `notif-${Date.now()}`,
-      title: `Complaint Status Updated`,
-      body: `Your complaint for "${targetComp ? targetComp.category : 'issue'}" has been updated to "${newStatus}".`,
-      date: 'Just now',
-      unread: true
-    });
-    localStorage.setItem('userNotifications', JSON.stringify(currentNotifications));
-
-    // Update feedback feed in case it changed to Resolved
-    const savedFeedbacks = JSON.parse(localStorage.getItem('citizenFeedbacks') || '[]');
-    setFeedbacks(savedFeedbacks);
-
-    setAlertMessage(`Complaint ${complaintId} status updated to "${newStatus}"! Notification sent to the citizen.`);
+      setAlertMessage(`Complaint status updated to "${newStatus}"! Notification sent to the citizen.`);
+      await fetchComplaints();
+    } catch (error) {
+      console.error('Update status error:', error);
+      alert('Network error updating status.');
+    }
   };
 
   useEffect(() => {

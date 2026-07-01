@@ -5,19 +5,42 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage on page load
-    const userRole = localStorage.getItem('userRole');
-    const email = localStorage.getItem('userEmail');
-    const name = localStorage.getItem('userName') || 'Citizen';
-
-    if (userRole && email) {
-      setCurrentUser({ name, email, role: userRole });
+    // Check if user is logged in from backend session cookie on load
+    async function checkSession() {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.user) {
+            setCurrentUser(data.user);
+            // Sync local storage for non-critical legacy layout hooks
+            localStorage.setItem('userRole', data.user.role);
+            localStorage.setItem('userEmail', data.user.email);
+            localStorage.setItem('userName', data.user.name);
+            localStorage.setItem('userPhone', data.user.mobile);
+            localStorage.setItem('userWard', data.user.ward);
+            localStorage.setItem('userAvatarType', data.user.avatarType);
+            localStorage.setItem('userAvatarBadge', data.user.avatarBadge);
+            localStorage.setItem('userAvatarUrl', data.user.avatarUrl || '');
+          }
+        } else {
+          // If session is invalid, clear state
+          setCurrentUser(null);
+        }
+      } catch (error) {
+        console.error('Session check failed:', error);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    checkSession();
   }, []);
 
-  const loginUser = (value, password) => {
+  const loginUser = async (value, password) => {
     const isEmail = value.includes('@');
     
     if (isEmail) {
@@ -37,43 +60,38 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
 
-    const savedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    const user = savedUsers.find(u => {
-      if (isEmail) {
-        return u.email.toLowerCase() === value.toLowerCase() && u.password === password;
-      } else {
-        return u.mobile === value && u.password === password;
-      }
-    });
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value, password, isAdminLogin: false })
+      });
 
-    let name = 'Citizen';
-    let emailAddress = isEmail ? value : 'citizen@gmail.com';
-    let phone = isEmail ? '9876543210' : value;
-    let ward = 'Sector 5';
-
-    if (user) {
-      name = user.name;
-      emailAddress = user.email;
-      phone = user.mobile;
-      ward = user.city + ', ' + user.state;
-    } else {
-      if (!isEmail) {
-        alert('Mobile credentials not found. Please register first.');
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.error || 'Login failed');
         return false;
       }
-    }
 
-    const userData = { name, email: emailAddress, role: 'user' };
-    setCurrentUser(userData);
-    localStorage.setItem('userRole', 'user');
-    localStorage.setItem('userEmail', emailAddress);
-    localStorage.setItem('userName', name);
-    localStorage.setItem('userPhone', phone);
-    localStorage.setItem('userWard', ward);
-    return true;
+      setCurrentUser(data.user);
+      localStorage.setItem('userRole', data.user.role);
+      localStorage.setItem('userEmail', data.user.email);
+      localStorage.setItem('userName', data.user.name);
+      localStorage.setItem('userPhone', data.user.mobile);
+      localStorage.setItem('userWard', data.user.ward);
+      localStorage.setItem('userAvatarType', data.user.avatarType);
+      localStorage.setItem('userAvatarBadge', data.user.avatarBadge);
+      localStorage.setItem('userAvatarUrl', data.user.avatarUrl || '');
+      return true;
+
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Network error during login.');
+      return false;
+    }
   };
 
-  const registerUser = (name, email, mobile, password, city, state) => {
+  const registerUser = async (name, email, mobile, password, city, state) => {
     if (!email.endsWith('@gmail.com')) {
       alert('Email must end with @gmail.com');
       return false;
@@ -91,99 +109,174 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
 
-    const savedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    if (savedUsers.some(u => u.email === email)) {
-      alert('Email already registered!');
-      return false;
-    }
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, mobile, password, city, state, role: 'user' })
+      });
 
-    const newUser = { name, email, mobile, password, city, state };
-    savedUsers.push(newUser);
-    localStorage.setItem('registeredUsers', JSON.stringify(savedUsers));
-
-    alert('Registration successful!');
-    return true;
-  };
-
-  const loginAdmin = (type, value, password) => {
-    const savedAdmins = JSON.parse(localStorage.getItem('registeredAdmins') || '[]');
-    let valid = false;
-    let name = 'Admin';
-
-    if (type === 'email') {
-      if (!value.endsWith('@gmail.com')) {
-        alert('Please use a valid Gmail address.');
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.error || 'Registration failed');
         return false;
       }
-      const admin = savedAdmins.find(a => a.email === value && a.password === password);
-      if (admin) {
-        valid = true;
-        name = admin.name;
-      }
-    } else {
-      const admin = savedAdmins.find(a => a.mobile === value && a.password === password);
-      if (admin) {
-        valid = true;
-        name = admin.name;
-      }
-    }
 
-    if (valid) {
-      const adminData = { name, email: type === 'email' ? value : 'admin@gmail.com', role: 'admin' };
-      setCurrentUser(adminData);
-      localStorage.setItem('userRole', 'admin');
-      localStorage.setItem('userEmail', adminData.email);
-      localStorage.setItem('userName', name);
+      setCurrentUser(data.user);
+      localStorage.setItem('userRole', data.user.role);
+      localStorage.setItem('userEmail', data.user.email);
+      localStorage.setItem('userName', data.user.name);
+      localStorage.setItem('userPhone', data.user.mobile);
+      localStorage.setItem('userWard', data.user.ward);
+      localStorage.setItem('userAvatarType', data.user.avatarType || 'badge');
+      localStorage.setItem('userAvatarBadge', data.user.avatarBadge || 'initials');
+      localStorage.setItem('userAvatarUrl', data.user.avatarUrl || '');
+      alert('Registration successful!');
       return true;
-    } else {
-      alert('Invalid credentials! Please register first.');
+
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('Network error during registration.');
       return false;
     }
   };
 
-  const registerAdmin = (name, email, mobile, password) => {
+  const loginAdmin = async (type, value, password) => {
+    if (type === 'email' && !value.endsWith('@gmail.com')) {
+      alert('Please use a valid Gmail address.');
+      return false;
+    }
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value, password, isAdminLogin: true })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.error || 'Admin login failed');
+        return false;
+      }
+
+      setCurrentUser(data.user);
+      localStorage.setItem('userRole', data.user.role);
+      localStorage.setItem('userEmail', data.user.email);
+      localStorage.setItem('userName', data.user.name);
+      return true;
+
+    } catch (error) {
+      console.error('Admin login error:', error);
+      alert('Network error during admin login.');
+      return false;
+    }
+  };
+
+  const registerAdmin = async (name, email, mobile, password) => {
     if (!email.endsWith('@gmail.com')) {
       alert('Please use a valid Gmail address.');
       return false;
     }
 
-    const newAdmin = { name, email, mobile, password };
-    const savedAdmins = JSON.parse(localStorage.getItem('registeredAdmins') || '[]');
-    savedAdmins.push(newAdmin);
-    localStorage.setItem('registeredAdmins', JSON.stringify(savedAdmins));
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          mobile,
+          password,
+          city: 'Gandhinagar',
+          state: 'Gujarat',
+          role: 'admin'
+        })
+      });
 
-    const adminData = { name, email, role: 'admin' };
-    setCurrentUser(adminData);
-    localStorage.setItem('userRole', 'admin');
-    localStorage.setItem('userEmail', email);
-    localStorage.setItem('userName', name);
-    alert('Registration successful!');
-    return true;
-  };
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.error || 'Admin registration failed');
+        return false;
+      }
 
-  const updateUser = (name, additionalData = {}) => {
-    if (currentUser) {
-      const updatedUser = { ...currentUser, name, ...additionalData };
-      setCurrentUser(updatedUser);
-      localStorage.setItem('userName', name);
-      if (additionalData.phone) localStorage.setItem('userPhone', additionalData.phone);
-      if (additionalData.ward) localStorage.setItem('userWard', additionalData.ward);
-      if (additionalData.language) localStorage.setItem('userLanguage', additionalData.language);
+      setCurrentUser(data.user);
+      localStorage.setItem('userRole', data.user.role);
+      localStorage.setItem('userEmail', data.user.email);
+      localStorage.setItem('userName', data.user.name);
+      alert('Registration successful!');
+      return true;
+
+    } catch (error) {
+      console.error('Admin registration error:', error);
+      alert('Network error during admin registration.');
+      return false;
     }
   };
 
-  const logout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userPhone');
-    localStorage.removeItem('userWard');
-    localStorage.removeItem('userLanguage');
+  const updateUser = async (name, additionalData = {}) => {
+    if (!currentUser) return;
+
+    try {
+      // Map properties for database update request
+      const payload = {
+        name,
+        mobile: additionalData.phone,
+        ward: additionalData.ward,
+        language: additionalData.language,
+        avatarType: additionalData.avatarType,
+        avatarBadge: additionalData.avatarBadge,
+        avatarUrl: additionalData.avatarUrl
+      };
+
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.error || 'Failed to update profile');
+        return;
+      }
+
+      setCurrentUser(data.user);
+      localStorage.setItem('userName', data.user.name);
+      localStorage.setItem('userPhone', data.user.mobile);
+      localStorage.setItem('userWard', data.user.ward);
+      localStorage.setItem('userLanguage', data.user.language || 'en');
+      localStorage.setItem('userAvatarType', data.user.avatarType);
+      localStorage.setItem('userAvatarBadge', data.user.avatarBadge);
+      localStorage.setItem('userAvatarUrl', data.user.avatarUrl || '');
+
+    } catch (error) {
+      console.error('Update profile error:', error);
+      alert('Network error updating profile.');
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setCurrentUser(null);
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userPhone');
+      localStorage.removeItem('userWard');
+      localStorage.removeItem('userLanguage');
+      localStorage.removeItem('userAvatarType');
+      localStorage.removeItem('userAvatarBadge');
+      localStorage.removeItem('userAvatarUrl');
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, loginUser, registerUser, loginAdmin, registerAdmin, logout, updateUser }}>
+    <AuthContext.Provider value={{ currentUser, loading, loginUser, registerUser, loginAdmin, registerAdmin, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

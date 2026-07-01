@@ -8,20 +8,29 @@ const ViewStatus = () => {
   const [ratings, setRatings] = useState({});
   const [comments, setComments] = useState({});
 
-  useEffect(() => {
-    // Fetch from localStorage, fallback to default static items if empty
-    const saved = JSON.parse(localStorage.getItem('complaints') || '[]');
-    if (saved.length === 0) {
-      const defaults = [
-        { id: '#001', category: 'Garbage Overflow', location: 'Market Area', status: 'Pending', date: '12 Jan 2026', description: 'Large garbage heap blocking secondary market road.' },
-        { id: '#002', category: 'Broken Streetlight', location: 'Sector 9', status: 'In Progress', date: '10 Jan 2026', description: 'Streetlight pole GMC-204 flickering repeatedly at night.' },
-        { id: '#003', category: 'Water Leakage', location: 'Main Road', status: 'Resolved', date: '08 Jan 2026', description: 'Drinking water pipeline leakage producing water wastage.', feedback: { rating: 5, comment: 'Quick repair done within 12 hours. Excellent work!' } }
-      ];
-      localStorage.setItem('complaints', JSON.stringify(defaults));
-      setComplaints(defaults);
-    } else {
-      setComplaints(saved);
+  const fetchComplaints = async () => {
+    try {
+      const response = await fetch('/api/complaints');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          const mapped = data.complaints.map(c => ({
+            ...c,
+            date: new Date(c.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+            location: c.locationName || 'Pinned Location',
+            description: c.details,
+            feedback: c.rating ? { rating: c.rating, comment: c.comment } : null
+          }));
+          setComplaints(mapped);
+        }
+      }
+    } catch (error) {
+      console.error('Fetch complaints error:', error);
     }
+  };
+
+  useEffect(() => {
+    fetchComplaints();
   }, []);
 
   const handleSetRating = (complaintId, ratingValue) => {
@@ -32,7 +41,7 @@ const ViewStatus = () => {
     setComments(prev => ({ ...prev, [complaintId]: commentValue }));
   };
 
-  const handleSubmitFeedback = (complaintId) => {
+  const handleSubmitFeedback = async (complaintId) => {
     const rating = ratings[complaintId] || 0;
     const comment = comments[complaintId] || '';
 
@@ -41,28 +50,25 @@ const ViewStatus = () => {
       return;
     }
 
-    const updated = complaints.map(c => {
-      if (c.id === complaintId) {
-        return { ...c, feedback: { rating, comment } };
+    try {
+      const response = await fetch(`/api/complaints/${complaintId}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rating, comment })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.error || 'Failed to submit feedback');
+        return;
       }
-      return c;
-    });
 
-    setComplaints(updated);
-    localStorage.setItem('complaints', JSON.stringify(updated));
-
-    // Store globally for Admin Control Board review feed
-    const globalFeedbacks = JSON.parse(localStorage.getItem('citizenFeedbacks') || '[]');
-    const targetComp = complaints.find(c => c.id === complaintId);
-    globalFeedbacks.unshift({
-      id: `fb-${Date.now()}`,
-      complaintId,
-      name: `Citizen (${targetComp ? targetComp.location : 'GMC Area'})`,
-      rating,
-      comment,
-      date: 'Just now'
-    });
-    localStorage.setItem('citizenFeedbacks', JSON.stringify(globalFeedbacks));
+      alert('Thank you for your feedback!');
+      await fetchComplaints();
+    } catch (error) {
+      console.error('Submit feedback error:', error);
+      alert('Network error submitting feedback.');
+    }
   };
 
   const styles = {

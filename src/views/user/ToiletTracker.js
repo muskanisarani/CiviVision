@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const ToiletTracker = () => {
@@ -81,13 +81,27 @@ const ToiletTracker = () => {
     }
   };
 
-  const toilets = [
-    { id: 1, name: 'Public Toilet – Sector 5', details: '500m away • Open', status: 'Clean' },
-    { id: 2, name: 'Community Toilet – Market Road', details: '1.2km away • Open', status: 'Moderate' },
-    { id: 3, name: 'SBM Toilet – Bus Stand', details: '2km away • 24x7', status: 'Needs Cleaning' }
-  ];
+  const [toilets, setToilets] = useState([]);
+
+  useEffect(() => {
+    async function loadToilets() {
+      try {
+        const res = await fetch('/api/toilets');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            setToilets(data.toilets);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load toilets:', err);
+      }
+    }
+    loadToilets();
+  }, []);
 
   const getStatusStyle = (status) => {
+    if (!status) return styles.badgeNeedsCleaning;
     switch (status.toLowerCase()) {
       case 'clean': return styles.badgeClean;
       case 'moderate': return styles.badgeModerate;
@@ -106,7 +120,7 @@ const ToiletTracker = () => {
           <div key={t.id} style={styles.card} className="toilet-card">
             <div>
               <h4 style={styles.cardTitle}>{t.name}</h4>
-              <p style={styles.cardSubtitle}>{t.details}</p>
+              <p style={styles.cardSubtitle}>{t.address} • {t.fee} • {t.type}</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
               <div style={{ ...styles.statusBadge, ...getStatusStyle(t.status) }}>{t.status}</div>
