@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import prisma from '../../../../lib/db';
 import { verifyAuth } from '../../../../lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // Simple distance formula for coordinate duplicate checks (approx 100 meters = 0.001 degrees)

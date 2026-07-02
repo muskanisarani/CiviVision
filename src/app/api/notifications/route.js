@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import prisma from '../../../lib/db';
 import { verifyAuth } from '../../../lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     const user = await verifyAuth(request);
