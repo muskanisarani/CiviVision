@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CiviVision – Admin Access</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8eddd;
+      font-family: 'Poppins', sans-serif;
+      color: #3a2d20;
+    }
+    .auth-card {
+      background-color: #c39a6b;
+      color: #fff;
+      border-radius: 30px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+      padding: 40px;
+      max-width: 420px;
+      margin: 80px auto;
+    }
+    h3 {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    label {
+      color: #f3e6d2;
+      font-weight: 500;
+    }
+    .form-control, .form-select {
+      border-radius: 15px;
+      border: none;
+      padding: 10px 14px;
+    }
+    .btn-main {
+      background-color: #a36b43;
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      width: 100%;
+      padding: 10px;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .btn-main:hover {
+      background-color: #8d5e39;
+    }
+    .toggle-link {
+      color: #fff;
+      font-weight: 500;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    footer {
+      text-align: center;
+      color: #6b5744;
+      font-size: 0.9rem;
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN FORM -->
+  <div class="auth-card" id="loginCard">
+    <h3>Admin Login</h3>
+    <form onsubmit="return loginAdmin(event)">
+      <div class="mb-3">
+        <label>Login With</label>
+        <select id="loginType" class="form-select" onchange="toggleLoginField()">
+          <option value="email">Email (Gmail)</option>
+          <option value="mobile">Mobile Number</option>
+        </select>
+      </div>
+
+      <div class="mb-3" id="emailField">
+        <label>Email Address</label>
+        <input type="email" id="adminEmail" class="form-control" placeholder="example@gmail.com" required>
+      </div>
+
+      <div class="mb-3 d-none" id="mobileField">
+        <label>Mobile Number</label>
+        <input type="tel" id="adminMobile" class="form-control" placeholder="10-digit number" pattern="[0-9]{10}">
+      </div>
+
+      <div class="mb-3">
+        <label>Password</label>
+        <input type="password" id="adminPassword" class="form-control" placeholder="Enter password" required>
+      </div>
+
+      <button type="submit" class="btn-main"><a href="admin_dashboard.html"  style="text-decoration: none; color: white;">Login</a></button>
+
+      <div class="text-center mt-3">
+        <span class="toggle-link" onclick="showRegister()">New Member? Register</span>
+      </div>
+    </form>
+  </div>
+
+  <!-- REGISTRATION FORM -->
+  <div class="auth-card d-none" id="registerCard">
+    <h3>Register New Admin</h3>
+    <form onsubmit="return registerAdmin(event)">
+      <div class="mb-3">
+        <label>Full Name</label>
+        <input type="text" id="regName" class="form-control" placeholder="Enter full name" required>
+      </div>
+
+      <div class="mb-3">
+        <label>Email Address (Gmail)</label>
+        <input type="email" id="regEmail" class="form-control" placeholder="example@gmail.com" required>
+      </div>
+
+      <div class="mb-3">
+        <label>Mobile Number</label>
+        <input type="tel" id="regMobile" class="form-control" placeholder="10-digit number" pattern="[0-9]{10}" required>
+      </div>
+
+      <div class="mb-3">
+        <label>Password</label>
+        <input type="password" id="regPassword" class="form-control" placeholder="Create password" required>
+      </div>
+
+      <button type="submit" class="btn-main"><a href="admin_dashboard.html" style="text-decoration: none; color: white;">Register</a></button>
+
+      <div class="text-center mt-3">
+        <span class="toggle-link" onclick="showLogin()">Back to Login</span>
+      </div>
+    </form>
+  </div>
+
+  <footer>© CiviVision | Team CoCreate | U.V. Patel College of Engineering</footer>
+
+  <script>
+    function toggleLoginField() {
+      const type = document.getElementById('loginType').value;
+      const emailField = document.getElementById('emailField');
+      const mobileField = document.getElementById('mobileField');
+      if (type === "email") {
+        emailField.classList.remove("d-none");
+        mobileField.classList.add("d-none");
+      } else {
+        emailField.classList.add("d-none");
+        mobileField.classList.remove("d-none");
+      }
+    }
+
+    function loginAdmin(event) {
+      event.preventDefault();
+      const type = document.getElementById('loginType').value;
+      const password = document.getElementById('adminPassword').value;
+      const savedAdmins = JSON.parse(localStorage.getItem("registeredAdmins") || "[]");
+      let valid = false;
+
+      if (type === "email") {
+        const email = document.getElementById('adminEmail').value;
+        valid = savedAdmins.some(a => a.email === email && a.password === password);
+      } else {
+        const mobile = document.getElementById('adminMobile').value;
+        valid = savedAdmins.some(a => a.mobile === mobile && a.password === password);
+      }
+
+      if (valid) {
+        localStorage.setItem("adminLoggedIn", "true");
+        window.location.href = "admin_dashboard.html";
+      } else {
+        alert("Invalid credentials! Please register first.");
+      }
+    }
+
+    function registerAdmin(event) {
+      event.preventDefault();
+      const email = document.getElementById('regEmail').value;
+      if (!email.endsWith("@gmail.com")) {
+        alert("Please use a valid Gmail address.");
+        return false;
+      }
+
+      const newAdmin = {
+        name: document.getElementById('regName').value,
+        email,
+        mobile: document.getElementById('regMobile').value,
+        password: document.getElementById('regPassword').value
+      };
+
+      const savedAdmins = JSON.parse(localStorage.getItem("registeredAdmins") || "[]");
+      savedAdmins.push(newAdmin);
+      localStorage.setItem("registeredAdmins", JSON.stringify(savedAdmins));
+
+      localStorage.setItem("adminLoggedIn", "true"); // auto login
+      alert("Registration successful! Redirecting to dashboard...");
+      window.location.href = "admin_dashboard.html";
+    }
+
+    function showRegister() {
+      document.getElementById('loginCard').classList.add("d-none");
+      document.getElementById('registerCard').classList.remove("d-none");
+    }
+
+    function showLogin() {
+      document.getElementById('registerCard').classList.add("d-none");
+      document.getElementById('loginCard').classList.remove("d-none");
+    }
+  </script>
+</body>
+</html>

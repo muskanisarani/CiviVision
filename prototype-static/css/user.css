@@ -1,0 +1,77 @@
+body {
+  background: #d8d3c8;
+  font-family: Arial, sans-serif;
+}
+
+.auth-card {
+  width: 380px;
+  margin: 60px auto;
+  padding: 30px;
+  background: #9b7b5a;
+  border-radius: 25px;
+  color: #eee;
+}
+
+.auth-card h3 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 14px;
+  color: #ddd;
+}
+
+.form-control, .form-select {
+  border-radius: 14px;
+  background: #cfd6df;
+  border: none;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 40px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 14px;
+  top: 42px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.eye-icon:hover {
+  opacity: 1;
+}
+
+.btn-main {
+  background: #7b5538;
+  color: white;
+  border-radius: 18px;
+  padding: 10px;
+  border: none;
+}
+
+.btn-main:hover {
+  background: #6a482f;
+}
+
+.toggle-link {
+  color: #e6e6e6;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.auth-card a {
+  text-decoration: none;
+}
+
+.auth-card .btn-light {
+  border-radius: 18px;
+  padding: 10px;
+}
+

@@ -1,0 +1,159 @@
+/* Auth and dashboard shared styling */
+.auth-card-custom {
+  width: 100%;
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 40px 32px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+}
+
+.auth-card-custom h3 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-control, .form-select {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  color: #0f172a !important;
+  padding: 12px 14px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.form-control::placeholder {
+  color: #94a3b8;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  outline: none;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 40px;
+}
+
+.eye-icon-custom {
+  position: absolute;
+  right: 14px;
+  top: 38px;
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 16px;
+  transition: opacity 0.2s;
+  user-select: none;
+}
+
+.eye-icon-custom:hover {
+  opacity: 1;
+}
+
+.btn-main-custom {
+  background: #6366f1;
+  color: white;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.btn-main-custom:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+}
+
+.toggle-link-custom {
+  color: #64748b;
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.toggle-link-custom:hover {
+  color: #4f46e5;
+}
+
+/* ==========================================================================
+   AUTH & USER PAGES DARK MODE STYLING
+   ========================================================================== */
+
+[data-theme="dark"] .auth-card-custom,
+body.dark-theme .auth-card-custom {
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 102, 241, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+[data-theme="dark"] .auth-card-custom h3,
+body.dark-theme .auth-card-custom h3 {
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #818cf8 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+[data-theme="dark"] .eye-icon-custom,
+body.dark-theme .eye-icon-custom {
+  color: #a5b4fc !important;
+}
+
+[data-theme="dark"] .eye-icon-custom:hover,
+body.dark-theme .eye-icon-custom:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+}
+
+[data-theme="dark"] .btn-main-custom,
+body.dark-theme .btn-main-custom {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.45) !important;
+}
+
+[data-theme="dark"] .btn-main-custom:hover,
+body.dark-theme .btn-main-custom:hover {
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
+  box-shadow: 0 6px 25px rgba(99, 102, 241, 0.65) !important;
+}
+
+[data-theme="dark"] .toggle-link-custom,
+body.dark-theme .toggle-link-custom {
+  color: #a5b4fc !important;
+}
+
+[data-theme="dark"] .toggle-link-custom:hover,
+body.dark-theme .toggle-link-custom:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}

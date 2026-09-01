@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CiviVision - Home</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      background-color: #f7f2ec;
+      color: #3c3c3c;
+    }
+
+    /* Navbar */
+    header {
+      background-color: #4b3e2e;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 15px;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #3b342e;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 25px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border-radius: 8px;
+      border: 2px solid #5b7b4d;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .btn-green {
+      background-color: #7ecf73;
+      color: white;
+      border: none;
+    }
+
+    .btn-green:hover {
+      background-color: #6dbb64;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: #3b3b3b;
+    }
+
+    .btn-outline:hover {
+      background-color: #e7f1e6;
+    }
+
+    /* About Section */
+    .about {
+      background-color: #fff;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .about h2 {
+      font-size: 22px;
+      font-weight: bold;
+      color: #3b342e;
+      margin-bottom: 10px;
+    }
+
+    .about p {
+      max-width: 600px;
+      margin: auto;
+      color: #5c5c5c;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #4b3e2e;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo"> CiviVision</div>
+    <nav>
+      <a href="user_home.html">Home</a>
+      <a href="user_report.html">Report</a>
+      <a href="user_track.html">Track</a>
+      <a href="#">User</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Report. Resolve. Revive Your City.</h1>
+    <p>
+      CiviVision connects citizens and authorities to build cleaner,
+      smarter, and more transparent cities.
+    </p>
+    <div class="buttons">
+      <button class="btn btn-green"><a href="user_report.html" style="text-decoration: none; color: white;">Report an Issue</a></button>
+      <button class="btn btn-outline"><a href="user_track.html" style="text-decoration: none; color: black;">Track Your Report</a></button>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about">
+    <h2>About CiviVision</h2>
+    <p>
+      CiviVision is a civic issue reporting system designed to make cities
+      brighter and better. It empowers citizens to easily report issues like
+      garbage, potholes, and broken streetlights, while helping authorities
+      track and manage resolutions.
+    </p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © CoCreate | CiviVision 
+  </footer>
+</body>
+</html>

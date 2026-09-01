@@ -1,0 +1,462 @@
+import React, { useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
+import UserBottomNav from '../../components/UserBottomNav';
+
+const UserDashboard = () => {
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [uncleanedCount, setUncleanedCount] = useState(0);
+
+  // Avatar States
+  const [avatarType, setAvatarType] = useState('badge');
+  const [avatarBadge, setAvatarBadge] = useState('initials');
+  const [avatarUrl, setAvatarUrl] = useState(null);
+
+  const fetchActiveDustbins = async () => {
+    try {
+      const response = await fetch('/api/complaints', { credentials: 'include' });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.complaints) {
+          const count = data.complaints.filter(
+            c => c.category === 'Garbage / Waste' && c.status !== 'Resolved'
+          ).length;
+          setUncleanedCount(count);
+        }
+      }
+    } catch (error) {
+      console.error('Fetch active complaints error:', error);
+    }
+  };
+
+  useEffect(() => {
+    const savedType = localStorage.getItem('userAvatarType') || 'badge';
+    const savedBadge = localStorage.getItem('userAvatarBadge') || 'initials';
+    const savedUrl = localStorage.getItem('userAvatarUrl') || null;
+    setAvatarType(savedType);
+    setAvatarBadge(savedBadge);
+    setAvatarUrl(savedUrl);
+
+    fetchActiveDustbins();
+  }, []);
+
+  const getInitials = (userName) => {
+    if (!userName) return 'C';
+    const parts = userName.trim().split(/\s+/);
+    if (parts.length > 1) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
+  };
+
+  const handleSOSDispatch = async (sosType, categoryName, successMessage) => {
+    let lat = 23.2156;
+    let lng = 72.6369;
+
+    const submitSOS = async (latitude, longitude) => {
+      try {
+        const response = await fetch('/api/complaints', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            category: categoryName,
+            details: `🚨 EMERGENCY SOS PANIC ALERT: ${sosType} reported at coordinates. Immediate dispatch requested.`,
+            photoUrl: null,
+            latitude: latitude,
+            longitude: longitude,
+            locationName: `SOS Dispatch Location (${latitude.toFixed(4)}°N, ${longitude.toFixed(4)}°E)`,
+            durationDays: 'Today'
+          }),
+          credentials: 'include'
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setAlertMessage(successMessage);
+          fetchActiveDustbins();
+        } else {
+          alert(data.error || 'Failed to submit SOS dispatch.');
+        }
+      } catch (err) {
+        console.error('SOS dispatch error:', err);
+        alert('Network error submitting SOS dispatch.');
+      }
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          submitSOS(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.warn('SOS geolocation blocked. Using default coords.', error);
+          submitSOS(lat + (Math.random() - 0.5) * 0.02, lng + (Math.random() - 0.5) * 0.02);
+        }
+      );
+    } else {
+      submitSOS(lat, lng);
+    }
+  };
+
+  const styles = {
+    body: {
+      minHeight: 'calc(100vh - 150px)',
+      fontFamily: '"Segoe UI", sans-serif',
+      padding: '24px 20px',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    container: {
+      width: '100%',
+      maxWidth: '100%',
+      backgroundColor: 'rgba(255, 255, 255, 0.55)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      border: '1px solid rgba(15, 23, 42, 0.08)',
+      borderRadius: '24px',
+      padding: '40px 30px',
+      boxShadow: '0 20px 45px rgba(15, 23, 42, 0.05)',
+    },
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '30px',
+      borderBottom: '1px solid rgba(15, 23, 42, 0.08)',
+      paddingBottom: '20px',
+    },
+    headerTop: {
+      display: 'flex',
+      gap: '12px',
+    },
+    iconCircle: {
+      width: '40px',
+      height: '40px',
+      backgroundColor: 'rgba(15, 23, 42, 0.04)',
+      border: '1px solid rgba(15, 23, 42, 0.08)',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '18px',
+      cursor: 'pointer',
+      transition: 'all 0.2s',
+      color: '#475569',
+    },
+    title: {
+      margin: '0',
+      fontSize: '28px',
+      fontWeight: '800',
+      letterSpacing: '-0.5px',
+      background: 'linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+    },
+    subtitle: {
+      margin: '4px 0 0 0',
+      fontSize: '14px',
+      color: '#475569',
+    },
+    statusCard: {
+      background: 'rgba(255, 255, 255, 0.5)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+      border: '1px solid rgba(15, 23, 42, 0.08)',
+      borderRadius: '18px',
+      padding: '18px 20px',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '20px',
+      boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04)',
+    },
+    count: {
+      fontSize: '28px',
+      color: '#dc2626',
+      fontWeight: '800',
+      margin: '4px 0',
+      letterSpacing: '-1px',
+    },
+    statusBtn: {
+      backgroundColor: '#6366f1',
+      color: '#ffffff',
+      border: 'none',
+      borderRadius: '12px',
+      padding: '8px 16px',
+      fontSize: '13px',
+      cursor: 'pointer',
+      fontWeight: '600',
+      boxShadow: '0 4px 10px rgba(99, 102, 241, 0.2)',
+    },
+    grid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '16px',
+      marginBottom: '24px',
+    },
+    card: {
+      background: 'rgba(255, 255, 255, 0.55)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+      border: '1px solid rgba(15, 23, 42, 0.08)',
+      borderRadius: '18px',
+      padding: '18px',
+      cursor: 'pointer',
+      transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+      boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04)',
+    },
+    cardIcon: {
+      width: '40px',
+      height: '40px',
+      backgroundColor: 'rgba(99, 102, 241, 0.1)',
+      border: '1px solid rgba(99, 102, 241, 0.15)',
+      borderRadius: '10px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '20px',
+      marginBottom: '12px',
+    }
+  };
+
+  return (
+    <div style={styles.body} className="user-dashboard-body">
+      <div style={styles.container}>
+        {/* HEADER */}
+        <div style={styles.header}>
+          <div>
+            <h2 style={styles.title}>Welcome!</h2>
+            <p style={styles.subtitle}>Hello, {currentUser ? currentUser.name : 'Citizen'}</p>
+          </div>
+          <div style={styles.headerTop}>
+            <div 
+              style={{ ...styles.iconCircle, overflow: 'hidden', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
+              onClick={() => navigate('/user/profile')} 
+              className="icon-hover" 
+              title="Profile"
+            >
+              {avatarType === 'upload' && avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span style={{ fontSize: avatarBadge === 'initials' ? '14px' : '18px', fontWeight: '800' }}>
+                  {avatarBadge === 'eco' ? '🍃' : 
+                   avatarBadge === 'defender' ? '🛡️' :
+                   avatarBadge === 'urban' ? '🏙️' :
+                   avatarBadge === 'hero' ? '🦸‍♂️' :
+                   avatarBadge === 'elite' ? '🌟' :
+                   avatarBadge === 'power' ? '⚡' : 
+                   avatarBadge === 'initials' ? getInitials(currentUser ? currentUser.name : 'Citizen') : '👤'}
+                </span>
+              )}
+            </div>
+            <div style={styles.iconCircle} onClick={() => navigate('/user/notifications')} className="icon-hover" title="Notifications">
+              <i className="bi bi-bell"></i>
+            </div>
+          </div>
+        </div>
+        <div style={styles.statusCard}>
+          <div>
+            <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#475569' }}>Dustbins reported uncleaned</h4>
+            <div style={styles.count}>{uncleanedCount}</div>
+            <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>in your reported locations</p>
+          </div>
+          <button style={styles.statusBtn} onClick={() => navigate('/user/view-status')} className="btn-hover">
+            View Status
+          </button>
+        </div>
+
+        <div style={styles.grid}>
+          <div style={styles.card} onClick={() => navigate('/user/complaint')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-camera" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Report Civic Issue</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineHeight: '1.4' }}>Upload photo to file AI complaint</p>
+          </div>
+
+          <div style={styles.card} onClick={() => navigate('/user/leaderboard')} className="dashboard-card">
+            <div style={{ ...styles.cardIcon, backgroundColor: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgba(245, 158, 11, 0.2)' }}>
+              <i className="bi bi-trophy-fill" style={{ color: '#d97706' }}></i>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 0 6px' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: '700', margin: 0, color: '#1e293b' }}>Leaderboard & Rewards</h4>
+              <span className="badge bg-warning-subtle text-warning border border-warning-subtle" style={{ fontSize: '10px' }}>
+                {currentUser?.credits || 50} Pts
+              </span>
+            </div>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineHeight: '1.4' }}>Earn Swachh Credits & tax rebates</p>
+          </div>
+
+          <div style={styles.card} onClick={() => navigate('/user/toilet-tracker')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-person-standing" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Toilet Tracker</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineHeight: '1.4' }}>Find & report nearest Swachh Toilet</p>
+          </div>
+
+          <div style={styles.card} onClick={() => navigate('/how-to-use')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-question-circle" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>How to Use</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineHeight: '1.4' }}>Stepped portal guide</p>
+          </div>
+
+          <div style={styles.card} onClick={() => navigate('/contact')} className="dashboard-card">
+            <div style={styles.cardIcon}>
+              <i className="bi bi-telephone-outbound" style={{ color: '#6366f1' }}></i>
+            </div>
+            <h4 style={{ fontSize: '15px', fontWeight: '700', margin: '0 0 6px', color: '#1e293b' }}>Contact Support</h4>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0, lineHeight: '1.4' }}>Report bugs or ask help</p>
+          </div>
+        </div>
+
+        {/* EMERGENCY SOS SECTION */}
+        <div style={{ marginTop: '28px' }}>
+          <h4 style={{ fontSize: '16px', fontWeight: '800', color: '#b91c1c', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="bi bi-exclamation-triangle-fill"></i> SOS Emergency Civic Dispatch
+          </h4>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px' }}>
+            <div 
+              style={{ padding: '14px', background: 'rgba(254, 226, 226, 0.55)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center' }}
+              onClick={() => handleSOSDispatch('Open Manhole', 'Drainage & Sewerage', '🚨 Open Manhole SOS reported! GMC Sanitation Rescue Unit has been dispatched to your current location.')}
+              className="sos-card"
+            >
+              <i className="bi bi-circle-square" style={{ fontSize: '20px', color: '#dc2626' }}></i>
+              <div style={{ fontSize: '12px', fontWeight: '700', color: '#991b1b', marginTop: '6px' }}>Open Manhole</div>
+            </div>
+            <div 
+              style={{ padding: '14px', background: 'rgba(254, 226, 226, 0.55)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center' }}
+              onClick={() => handleSOSDispatch('Live Power Wire', 'Streetlights', '⚡ Live Electrical Wire SOS reported! PGVCL Power Squad has been alerted for immediate cutoff.')}
+              className="sos-card"
+            >
+              <i className="bi bi-lightning-charge" style={{ fontSize: '20px', color: '#dc2626' }}></i>
+              <div style={{ fontSize: '12px', fontWeight: '700', color: '#991b1b', marginTop: '6px' }}>Live Power Wire</div>
+            </div>
+            <div 
+              style={{ padding: '14px', background: 'rgba(254, 226, 226, 0.55)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center' }}
+              onClick={() => handleSOSDispatch('Severe Flooding', 'Drainage & Sewerage', '💧 Severe Flooding SOS reported! GMC Drainage Pumping Crew has been dispatched.')}
+              className="sos-card"
+            >
+              <i className="bi bi-water" style={{ fontSize: '20px', color: '#dc2626' }}></i>
+              <div style={{ fontSize: '12px', fontWeight: '700', color: '#991b1b', marginTop: '6px' }}>Severe Flooding</div>
+            </div>
+          </div>
+        </div>
+
+        {/* SLA & OFFICIAL DIRECTORY */}
+        <div style={{ marginTop: '28px', padding: '18px', background: 'rgba(255, 255, 255, 0.55)', border: '1px solid rgba(15, 23, 42, 0.08)', borderRadius: '18px', boxShadow: '0 8px 32px rgba(15, 23, 42, 0.04)' }}>
+          <h4 style={{ fontSize: '15px', fontWeight: '800', color: '#1e293b', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="bi bi-clock-history" style={{ color: '#4f46e5' }}></i> Citizen Charter (SLA Timescales)
+          </h4>
+          <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+              <span>🚨 Emergency Civic Hazards</span>
+              <span style={{ fontWeight: '700', color: '#dc2626' }}>Immediate (2h)</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+              <span>🗑️ Garbage & Waste Pileup</span>
+              <span style={{ fontWeight: '600', color: '#2563eb' }}>Within 24 Hours</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+              <span>💧 Water Supply Leakage</span>
+              <span style={{ fontWeight: '600', color: '#2563eb' }}>Within 12 Hours</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+              <span>🛣️ Road Damage & Potholes</span>
+              <span style={{ fontWeight: '600', color: '#2563eb' }}>Within 5-7 Days</span>
+            </div>
+          </div>
+          
+          <hr style={{ margin: '14px 0', borderColor: 'rgba(15, 23, 42, 0.08)' }} />
+          
+          <h4 style={{ fontSize: '13px', fontWeight: '800', color: '#1e293b', marginBottom: '8px' }}>Grievance Officers Directory</h4>
+          <div style={{ fontSize: '12px', color: '#64748b' }}>
+            <div>📞 Swachh Bharat Helpline: <strong>1969</strong></div>
+            <div>📧 GMC Nodal Officer: <strong>grievance@gmc.gov.in</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <UserBottomNav />
+
+      {/* CUSTOM ALERT MODAL */}
+      {alertMessage && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(15, 23, 42, 0.3)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.85)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(15, 23, 42, 0.08)',
+            borderRadius: '20px',
+            padding: '24px 32px',
+            maxWidth: '400px',
+            width: '90%',
+            textAlign: 'center',
+            boxShadow: '0 20px 40px rgba(15, 23, 42, 0.1)',
+          }}>
+            <div style={{ fontSize: '32px', marginBottom: '12px' }}>
+              {alertMessage.includes('🚨') || alertMessage.includes('⚡') || alertMessage.includes('💧') ? '🚨' : '✨'}
+            </div>
+            <h5 style={{ fontWeight: '700', color: '#0f172a', marginBottom: '12px', fontSize: '16px' }}>Dispatch Alert</h5>
+            <p style={{ color: '#475569', fontSize: '14px', lineHeight: '1.5', marginBottom: '20px' }}>{alertMessage}</p>
+            <button 
+              style={{
+                background: '#6366f1',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '10px 24px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)',
+                transition: 'all 0.2s'
+              }}
+              onClick={() => setAlertMessage(null)}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style jsx="true" global="true">{`
+        .icon-hover:hover {
+          background-color: rgba(15, 23, 42, 0.08) !important;
+          color: #0f172a !important;
+        }
+        .btn-hover:hover {
+          background-color: #4f46e5 !important;
+          transform: translateY(-1px);
+        }
+        .dashboard-card:hover {
+          transform: translateY(-2px);
+          border-color: rgba(99, 102, 241, 0.25) !important;
+          background: rgba(255, 255, 255, 0.8) !important;
+        }
+        .sos-card:hover {
+          transform: translateY(-2px);
+          background-color: rgba(254, 202, 202, 0.85) !important;
+          border-color: rgba(239, 68, 68, 0.4) !important;
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08) !important;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default UserDashboard;

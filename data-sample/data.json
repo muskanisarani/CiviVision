@@ -1,0 +1,26 @@
+[
+  {
+    "id": "#001",
+    "category": "Garbage Overflow",
+    "location": "Gandhinagar",
+    "status": "Pending",
+    "lat": 23.2156,
+    "lng": 72.6369
+  },
+  {
+    "id": "#002",
+    "category": "Broken Streetlight",
+    "location": "Ahmedabad",
+    "status": "Resolved",
+    "lat": 23.0225,
+    "lng": 72.5714
+  },
+  {
+    "id": "#003",
+    "category": "Pothole",
+    "location": "Mehsana",
+    "status": "In Progress",
+    "lat": 23.5879,
+    "lng": 72.3693
+  }
+]
