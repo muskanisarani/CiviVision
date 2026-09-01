@@ -50,7 +50,8 @@ const Leaderboard = () => {
       paddingBottom: '80px'
     },
     container: {
-      maxWidth: '850px',
+      maxWidth: '1400px',
+      width: '100%',
       margin: '0 auto'
     },
     headerCard: {
@@ -187,204 +188,256 @@ const Leaderboard = () => {
           </div>
         </div>
 
-        {/* CITY LEADERBOARD TABLE */}
-        <div style={styles.card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h4 style={{ fontSize: '16px', fontWeight: '800', margin: 0, color: '#0f172a' }}>
-              🌟 Gandhinagar Top Civic Champions
-            </h4>
-            <span style={{ fontSize: '12px', color: '#64748b' }}>Live Ward Standings</span>
-          </div>
+        {/* EXPANSIVE 2-COLUMN GRID */}
+        <div className="leaderboard-grid-layout">
+          
+          {/* LEFT COLUMN: Champions Table */}
+          <div style={styles.card}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+              <div>
+                <h4 style={{ fontSize: '18px', fontWeight: '800', margin: 0, color: 'var(--text-primary, #0f172a)' }}>
+                  🌟 Gandhinagar Top Civic Champions
+                </h4>
+                <span style={{ fontSize: '12px', color: '#64748b' }}>Live Ward Standings & Verification Rank</span>
+              </div>
+              <span className="badge-pill-detailed badge-pill-emerald">Live Ranks</span>
+            </div>
 
-          <div className="table-responsive">
-            <table className="table table-hover align-middle" style={{ margin: 0 }}>
-              <thead className="table-light">
-                <tr>
-                  <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Rank</th>
-                  <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Citizen & Ward</th>
-                  <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Tier</th>
-                  <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Verified Reports</th>
-                  <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Swachh Credits</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.length === 0 ? (
+            <div className="table-responsive">
+              <table className="table table-hover align-middle" style={{ margin: 0 }}>
+                <thead className="table-light">
                   <tr>
-                    <td colSpan="5" className="text-center py-4" style={{ color: '#64748b', fontSize: '13px' }}>
-                      No ranked citizens found.
-                    </td>
+                    <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Rank</th>
+                    <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Citizen & Ward</th>
+                    <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Tier</th>
+                    <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Verified Reports</th>
+                    <th style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Swachh Credits</th>
                   </tr>
-                ) : (
-                  leaderboard.map(citizen => {
-                    const isSelf = citizen.id === currentUser?.id || citizen.email === currentUser?.email;
+                </thead>
+                <tbody>
+                  {leaderboard.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="text-center py-4" style={{ color: '#64748b', fontSize: '13px' }}>
+                        No ranked citizens found.
+                      </td>
+                    </tr>
+                  ) : (
+                    leaderboard.map(citizen => {
+                      const isSelf = citizen.id === currentUser?.id || citizen.email === currentUser?.email;
 
-                    return (
-                      <tr key={citizen.id} style={{ backgroundColor: isSelf ? 'rgba(99, 102, 241, 0.08)' : 'transparent' }}>
-                        <td>
-                          <span style={{
-                            width: '28px',
-                            height: '28px',
-                            borderRadius: '50%',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: '800',
-                            fontSize: '12px',
-                            backgroundColor: citizen.rank === 1 ? '#fef3c7' : (citizen.rank === 2 ? '#f1f5f9' : (citizen.rank === 3 ? '#ffedd5' : '#f8fafc')),
-                            color: citizen.rank === 1 ? '#b45309' : (citizen.rank === 2 ? '#475569' : (citizen.rank === 3 ? '#c2410c' : '#64748b')),
-                            border: '1px solid rgba(15,23,42,0.1)'
-                          }}>
-                            {citizen.rank === 1 ? '🥇' : (citizen.rank === 2 ? '🥈' : (citizen.rank === 3 ? '🥉' : citizen.rank))}
-                          </span>
-                        </td>
-                        <td>
-                          <strong style={{ fontSize: '13px', color: '#0f172a' }}>
-                            {citizen.name} {isSelf && <span className="badge bg-primary" style={{ fontSize: '9px', marginLeft: '4px' }}>YOU</span>}
-                          </strong>
-                          <div style={{ fontSize: '11px', color: '#64748b' }}>
-                            📍 {citizen.ward || 'Sector 5'}, {citizen.city || 'Gandhinagar'}
-                          </div>
-                        </td>
-                        <td>
-                          <span className="badge" style={{
-                            backgroundColor: citizen.credits >= 1000 ? '#f3e8ff' : (citizen.credits >= 500 ? '#fef3c7' : '#e0e7ff'),
-                            color: citizen.credits >= 1000 ? '#7e22ce' : (citizen.credits >= 500 ? '#b45309' : '#4338ca'),
-                            border: '1px solid rgba(15,23,42,0.08)',
-                            fontSize: '11px'
-                          }}>
-                            {citizen.badgeIcon} {citizen.tier}
-                          </span>
-                        </td>
-                        <td style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a' }}>
-                          {citizen.verifiedReportsCount || 0} issues
-                        </td>
-                        <td>
-                          <strong style={{ fontSize: '14px', color: '#4f46e5' }}>
-                            {citizen.credits}
-                          </strong>
-                          <span style={{ fontSize: '11px', color: '#64748b', marginLeft: '3px' }}>pts</span>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* REDEEM MUNICIPAL REWARDS SECTION */}
-        <div style={styles.card}>
-          <h4 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '6px', color: '#0f172a' }}>
-            🎁 Municipal Reward Redemption Catalog
-          </h4>
-          <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>
-            Use your earned Swachh Credits to unlock smart city government incentives & certificates.
-          </p>
-
-          <div className="row g-3">
-            <div className="col-md-4">
-              <div style={styles.rewardCard}>
-                <div>
-                  <span style={{ fontSize: '24px', display: 'block', marginBottom: '8px' }}>🧾</span>
-                  <h5 style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a', margin: '0 0 4px 0' }}>
-                    5% Property Tax Rebate
-                  </h5>
-                  <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>
-                    Discount coupon code applied to next fiscal year GMC property tax bill.
-                  </p>
-                </div>
-                <div style={{ marginTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '13px', fontWeight: '800', color: '#4f46e5' }}>500 Pts</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRedeem('5% Property Tax Rebate', 500)}
-                    style={{
-                      backgroundColor: '#6366f1',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '6px 12px',
-                      fontSize: '12px',
-                      fontWeight: '700',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Redeem
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div style={styles.rewardCard}>
-                <div>
-                  <span style={{ fontSize: '24px', display: 'block', marginBottom: '8px' }}>🏆</span>
-                  <h5 style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a', margin: '0 0 4px 0' }}>
-                    GMC SBM Eco-Champion Certificate
-                  </h5>
-                  <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>
-                    Official government verified certificate for resume & academic honours.
-                  </p>
-                </div>
-                <div style={{ marginTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '13px', fontWeight: '800', color: '#4f46e5' }}>750 Pts</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRedeem('GMC SBM Eco-Champion Certificate', 750)}
-                    style={{
-                      backgroundColor: '#6366f1',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '6px 12px',
-                      fontSize: '12px',
-                      fontWeight: '700',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Redeem
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div style={styles.rewardCard}>
-                <div>
-                  <span style={{ fontSize: '24px', display: 'block', marginBottom: '8px' }}>🚌</span>
-                  <h5 style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a', margin: '0 0 4px 0' }}>
-                    Free 1-Month City Bus Pass
-                  </h5>
-                  <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>
-                    Unlimited travel pass on Gandhinagar Municipal EV City bus routes.
-                  </p>
-                </div>
-                <div style={{ marginTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '13px', fontWeight: '800', color: '#4f46e5' }}>1000 Pts</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRedeem('1-Month City Bus Pass', 1000)}
-                    style={{
-                      backgroundColor: '#6366f1',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '6px 12px',
-                      fontSize: '12px',
-                      fontWeight: '700',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Redeem
-                  </button>
-                </div>
-              </div>
+                      return (
+                        <tr key={citizen.id} style={{ backgroundColor: isSelf ? 'rgba(99, 102, 241, 0.08)' : 'transparent' }}>
+                          <td>
+                            <span style={{
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '50%',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontWeight: '800',
+                              fontSize: '12px',
+                              backgroundColor: citizen.rank === 1 ? '#fef3c7' : (citizen.rank === 2 ? '#f1f5f9' : (citizen.rank === 3 ? '#ffedd5' : '#f8fafc')),
+                              color: citizen.rank === 1 ? '#b45309' : (citizen.rank === 2 ? '#475569' : (citizen.rank === 3 ? '#c2410c' : '#64748b')),
+                              border: '1px solid rgba(15,23,42,0.1)'
+                            }}>
+                              {citizen.rank === 1 ? '🥇' : (citizen.rank === 2 ? '🥈' : (citizen.rank === 3 ? '🥉' : citizen.rank))}
+                            </span>
+                          </td>
+                          <td>
+                            <strong style={{ fontSize: '13px', color: 'var(--text-primary, #0f172a)' }}>
+                              {citizen.name} {isSelf && <span className="badge bg-primary" style={{ fontSize: '9px', marginLeft: '4px' }}>YOU</span>}
+                            </strong>
+                            <div style={{ fontSize: '11px', color: '#64748b' }}>
+                              📍 {citizen.ward || 'Sector 5'}, {citizen.city || 'Gandhinagar'}
+                            </div>
+                          </td>
+                          <td>
+                            <span className="badge" style={{
+                              backgroundColor: citizen.credits >= 1000 ? '#f3e8ff' : (citizen.credits >= 500 ? '#fef3c7' : '#e0e7ff'),
+                              color: citizen.credits >= 1000 ? '#7e22ce' : (citizen.credits >= 500 ? '#b45309' : '#4338ca'),
+                              border: '1px solid rgba(15,23,42,0.08)',
+                              fontSize: '11px'
+                            }}>
+                              {citizen.badgeIcon} {citizen.tier}
+                            </span>
+                          </td>
+                          <td style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-primary, #0f172a)' }}>
+                            {citizen.verifiedReportsCount || 0} issues
+                          </td>
+                          <td>
+                            <strong style={{ fontSize: '14px', color: '#4f46e5' }}>
+                              {citizen.credits}
+                            </strong>
+                            <span style={{ fontSize: '11px', color: '#64748b', marginLeft: '3px' }}>pts</span>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
+
+          {/* RIGHT COLUMN: Rewards & Recognition */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            
+            {/* Municipal Rewards Catalog */}
+            <div style={styles.card}>
+              <h4 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '6px', color: 'var(--text-primary, #0f172a)' }}>
+                🎁 Municipal Reward Redemption
+              </h4>
+              <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>
+                Exchange your earned Swachh Credits for municipal tax rebates, transit passes & certificates.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={styles.rewardCard}>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                    <span style={{ fontSize: '24px' }}>🧾</span>
+                    <div style={{ flex: 1 }}>
+                      <h5 style={{ fontSize: '13.5px', fontWeight: '700', color: 'var(--text-primary, #0f172a)', margin: '0 0 2px 0' }}>
+                        5% Property Tax Rebate
+                      </h5>
+                      <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>
+                        Discount coupon code applied to next fiscal year GMC property tax bill.
+                      </p>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', fontWeight: '800', color: '#4f46e5' }}>500 Pts</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRedeem('5% Property Tax Rebate', 500)}
+                      style={{
+                        backgroundColor: '#6366f1',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '6px 14px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Redeem
+                    </button>
+                  </div>
+                </div>
+
+                <div style={styles.rewardCard}>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                    <span style={{ fontSize: '24px' }}>🏆</span>
+                    <div style={{ flex: 1 }}>
+                      <h5 style={{ fontSize: '13.5px', fontWeight: '700', color: 'var(--text-primary, #0f172a)', margin: '0 0 2px 0' }}>
+                        GMC SBM Eco-Champion Certificate
+                      </h5>
+                      <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>
+                        Official government verified certificate for resume & academic honours.
+                      </p>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', fontWeight: '800', color: '#4f46e5' }}>750 Pts</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRedeem('GMC SBM Eco-Champion Certificate', 750)}
+                      style={{
+                        backgroundColor: '#6366f1',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '6px 14px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Redeem
+                    </button>
+                  </div>
+                </div>
+
+                <div style={styles.rewardCard}>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                    <span style={{ fontSize: '24px' }}>🚌</span>
+                    <div style={{ flex: 1 }}>
+                      <h5 style={{ fontSize: '13.5px', fontWeight: '700', color: 'var(--text-primary, #0f172a)', margin: '0 0 2px 0' }}>
+                        Free 1-Month City Bus Pass
+                      </h5>
+                      <p style={{ fontSize: '11px', color: '#64748b', margin: 0 }}>
+                        Unlimited travel pass on Gandhinagar Municipal EV City bus routes.
+                      </p>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', fontWeight: '800', color: '#4f46e5' }}>1000 Pts</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRedeem('1-Month City Bus Pass', 1000)}
+                      style={{
+                        backgroundColor: '#6366f1',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '6px 14px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Redeem
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recognition Tiers Guide */}
+            <div className="glass-card-detailed" style={{ padding: '20px' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '10px', color: 'var(--text-primary, #0f172a)' }}>
+                🎖️ Citizen Tier Milestones
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '8px' }}>
+                  <span>🥉 <strong>Civic Scout</strong></span>
+                  <span style={{ color: '#64748b' }}>0 - 249 pts</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '8px' }}>
+                  <span>🥈 <strong>Silver Guardian</strong></span>
+                  <span style={{ color: '#64748b' }}>250 - 499 pts</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(245, 158, 11, 0.08)', borderRadius: '8px' }}>
+                  <span>🥇 <strong>Gold Champion</strong></span>
+                  <span style={{ color: '#d97706', fontWeight: '700' }}>500 - 999 pts</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(168, 85, 247, 0.08)', borderRadius: '8px' }}>
+                  <span>🏆 <strong>Diamond Envoy</strong></span>
+                  <span style={{ color: '#9333ea', fontWeight: '700' }}>1000+ pts</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
       </div>
+
+      <style jsx="true" global="true">{`
+        .leaderboard-grid-layout {
+          display: grid;
+          grid-template-columns: 1.4fr 1fr;
+          gap: 24px;
+          align-items: start;
+        }
+        @media (max-width: 960px) {
+          .leaderboard-grid-layout {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
 
       {/* REDEEM SUCCESS MODAL */}
       {redeemSuccess && (

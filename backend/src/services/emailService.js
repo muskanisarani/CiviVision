@@ -1,4 +1,4 @@
-﻿const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 
 // In-memory OTP storage: email -> { otp, expiresAt, attempts }
 const otpCache = new Map();
@@ -7,12 +7,19 @@ const otpCache = new Map();
  * Configure Nodemailer Transporter
  */
 function createTransporter() {
-  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const port = parseInt(process.env.SMTP_PORT || '587', 10);
   const user = process.env.SMTP_USER || process.env.EMAIL_USER;
-  const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+  const pass = (process.env.SMTP_PASS || process.env.EMAIL_PASS || '').replace(/\s+/g, '');
 
   if (user && pass) {
+    if (user.includes('@gmail.com') || (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail'))) {
+      return nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user, pass }
+      });
+    }
+
+    const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+    const port = parseInt(process.env.SMTP_PORT || '587', 10);
     return nodemailer.createTransport({
       host,
       port,
@@ -21,7 +28,6 @@ function createTransporter() {
     });
   }
 
-  // Fallback for development / local testing
   return null;
 }
 

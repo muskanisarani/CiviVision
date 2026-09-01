@@ -91,9 +91,10 @@ const ViewStatus = () => {
       gap: '12px',
     },
     container: {
-      padding: '24px 16px',
-      maxWidth: '780px',
-      margin: 'auto',
+      padding: '24px 20px',
+      maxWidth: '1400px',
+      width: '100%',
+      margin: '0 auto',
     },
     statusCard: {
       backgroundColor: 'var(--card-bg)',
@@ -187,224 +188,331 @@ const ViewStatus = () => {
       </div>
 
       <div style={styles.container}>
-        {complaints.length === 0 ? (
-          <div style={{
-            textAlign: 'center',
-            padding: '60px 20px',
-            backgroundColor: 'var(--card-bg)',
-            backdropFilter: 'blur(16px)',
-            borderRadius: '24px',
-            border: '1px dashed var(--card-border)',
-            boxShadow: 'var(--card-shadow)'
-          }}>
-            <div style={{ fontSize: '36px', marginBottom: '12px' }}>🎫</div>
-            <h4 style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '16px', marginBottom: '6px' }}>No Active Tickets Found</h4>
-            <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '18px' }}>
-              You have not filed any civic defect reports yet.
-            </p>
-            <button
-              onClick={() => navigate('/user/complaint')}
-              style={{
-                backgroundColor: '#6366f1',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '10px 20px',
-                fontSize: '13px',
-                fontWeight: '700',
-                cursor: 'pointer'
-              }}
-            >
-              Report a Civic Issue Now
-            </button>
-          </div>
-        ) : (
-          complaints.map((c, index) => {
-            const isResolved = c.status.toLowerCase() === 'resolved';
-            const inProgress = c.status.toLowerCase() === 'in progress';
-            const hasFeedback = c.feedback;
+        
+        <div className="tickets-grid-layout">
+          
+          {/* LEFT COLUMN: Tickets Feed */}
+          <div>
+            {complaints.length === 0 ? (
+              <div style={{
+                textAlign: 'center',
+                padding: '60px 20px',
+                backgroundColor: 'var(--card-bg)',
+                backdropFilter: 'blur(16px)',
+                borderRadius: '24px',
+                border: '1px dashed var(--card-border)',
+                boxShadow: 'var(--card-shadow)'
+              }}>
+                <div style={{ fontSize: '36px', marginBottom: '12px' }}>🎫</div>
+                <h4 style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '16px', marginBottom: '6px' }}>No Active Tickets Found</h4>
+                <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '18px' }}>
+                  You have not filed any civic defect reports yet.
+                </p>
+                <button
+                  onClick={() => navigate('/user/complaint')}
+                  style={{
+                    backgroundColor: '#6366f1',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '10px 20px',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Report a Civic Issue Now
+                </button>
+              </div>
+            ) : (
+              complaints.map((c, index) => {
+                const isResolved = c.status.toLowerCase() === 'resolved';
+                const inProgress = c.status.toLowerCase() === 'in progress';
+                const hasFeedback = c.feedback;
 
-            return (
-              <div key={c.id || index} style={styles.statusCard} className="status-card">
-                
-                {/* Header & Ticket ID Badge */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span style={{
-                        fontSize: '12px',
-                        fontWeight: '800',
-                        backgroundColor: '#e0e7ff',
-                        color: '#4338ca',
-                        padding: '3px 10px',
-                        borderRadius: '6px',
-                        letterSpacing: '0.5px'
-                      }}>
-                        #{c.ticketId}
-                      </span>
-                      <span style={{ fontSize: '12px', color: '#64748b' }}>
-                        {c.date || 'Today'}
+                return (
+                  <div key={c.id || index} style={styles.statusCard} className="status-card">
+                    
+                    {/* Header & Ticket ID Badge */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <span style={{
+                            fontSize: '12px',
+                            fontWeight: '800',
+                            backgroundColor: '#e0e7ff',
+                            color: '#4338ca',
+                            padding: '3px 10px',
+                            borderRadius: '6px',
+                            letterSpacing: '0.5px'
+                          }}>
+                            #{c.ticketId}
+                          </span>
+                          <span style={{ fontSize: '12px', color: '#64748b' }}>
+                            {c.date || 'Today'}
+                          </span>
+                        </div>
+                        <h4 style={styles.cardTitle}>{c.category}</h4>
+                        <p style={{ ...styles.cardText, marginTop: '2px' }}>
+                          📍 {c.location}
+                        </p>
+                      </div>
+                      <span style={{ ...styles.badge, ...getBadgeStyle(c.status) }}>
+                        <i className={isResolved ? "bi bi-check-circle-fill" : (inProgress ? "bi bi-arrow-repeat" : "bi bi-clock-history")}></i>
+                        {c.status}
                       </span>
                     </div>
-                    <h4 style={styles.cardTitle}>{c.category}</h4>
-                    <p style={{ ...styles.cardText, marginTop: '2px' }}>
-                      📍 {c.location}
-                    </p>
-                  </div>
-                  <span style={{ ...styles.badge, ...getBadgeStyle(c.status) }}>
-                    <i className={isResolved ? "bi bi-check-circle-fill" : (inProgress ? "bi bi-arrow-repeat" : "bi bi-clock-history")}></i>
-                    {c.status}
-                  </span>
-                </div>
 
-                {/* AI Attributes Grid */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                  gap: '8px',
-                  backgroundColor: 'rgba(241, 245, 249, 0.6)',
-                  borderRadius: '12px',
-                  padding: '10px 14px',
-                  margin: '12px 0',
-                  fontSize: '12px'
-                }}>
-                  <div>
-                    <span style={{ color: '#64748b', display: 'block', fontSize: '11px' }}>Defect Subtype</span>
-                    <strong style={{ color: '#0f172a' }}>{c.wasteType || 'Standard'}</strong>
-                  </div>
-                  <div>
-                    <span style={{ color: '#64748b', display: 'block', fontSize: '11px' }}>Volume / Scale</span>
-                    <strong style={{ color: '#0f172a' }}>{c.wasteVolume || 'Medium'}</strong>
-                  </div>
-                  <div>
-                    <span style={{ color: '#64748b', display: 'block', fontSize: '11px' }}>Problem Duration</span>
-                    <strong style={{ color: '#0f172a' }}>{c.durationDays || 'Today'}</strong>
-                  </div>
-                </div>
-
-                {/* Photo & Description Row */}
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                  {c.photoUrl && (
-                    <img 
-                      src={c.photoUrl} 
-                      alt="Defect" 
-                      style={{ width: '64px', height: '64px', borderRadius: '10px', objectFit: 'cover', border: '1px solid rgba(15,23,42,0.1)' }}
-                    />
-                  )}
-                  <div style={{ flex: 1 }}>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#334155', lineHeight: '1.4' }}>
-                      {c.description?.includes('[Garbage Details]') || c.description?.includes('[Road Details]') || c.description?.includes('[Water Details]') || c.description?.includes('[Streetlight Details]') || c.description?.includes('[Drainage Details]') || c.description?.includes('[Toilet Details]') ? (
-                        c.description.split('\n\n')[0]
-                      ) : (
-                        c.description
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Resolution Progress Bar */}
-                <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(15, 23, 42, 0.06)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '700', color: '#64748b', marginBottom: '6px' }}>
-                    <span style={{ color: '#10b981' }}>✓ 1. AI Audited</span>
-                    <span style={{ color: inProgress || isResolved ? '#2563eb' : '#94a3b8' }}>
-                      {inProgress || isResolved ? '✓' : '•'} 2. Crew Dispatched
-                    </span>
-                    <span style={{ color: isResolved ? '#10b981' : '#94a3b8' }}>
-                      {isResolved ? '✓' : '•'} 3. Resolved on Site
-                    </span>
-                  </div>
-                  <div className="progress" style={{ height: '6px', borderRadius: '3px', backgroundColor: '#e2e8f0' }}>
-                    <div 
-                      className="progress-bar" 
-                      style={{ 
-                        width: isResolved ? '100%' : (inProgress ? '65%' : '25%'),
-                        backgroundColor: isResolved ? '#10b981' : (inProgress ? '#2563eb' : '#f59e0b')
-                      }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* POST-RESOLUTION CITIZEN FEEDBACK */}
-                {isResolved && (
-                  <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px dashed rgba(15, 23, 42, 0.1)' }}>
-                    {hasFeedback ? (
-                      <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.04)', border: '1px solid rgba(16, 185, 129, 0.15)', borderRadius: '12px', padding: '12px' }}>
-                        <span style={{ fontSize: '12px', fontWeight: '700', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <i className="bi bi-patch-check-fill"></i> Citizen Resolution Review Recorded
-                        </span>
-                        <div style={{ fontSize: '14px', color: '#eab308', margin: '4px 0' }}>
-                          {'★'.repeat(c.feedback.rating)}{'☆'.repeat(5 - c.feedback.rating)}
-                        </div>
-                        <p style={{ margin: 0, fontSize: '12px', color: '#475569', fontStyle: 'italic' }}>"{c.feedback.comment}"</p>
-                      </div>
-                    ) : (
+                    {/* AI Attributes Grid */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                      gap: '10px',
+                      backgroundColor: 'rgba(15, 23, 42, 0.03)',
+                      borderRadius: '12px',
+                      padding: '12px',
+                      marginTop: '14px',
+                      marginBottom: '14px'
+                    }}>
                       <div>
-                        <h5 style={{ fontSize: '13px', fontWeight: '700', color: '#4f46e5', margin: '0 0 6px 0' }}>
-                          Rate Resolution Quality:
-                        </h5>
-                        <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
-                          {[1, 2, 3, 4, 5].map(star => (
-                            <span 
-                              key={star} 
-                              style={{ 
-                                cursor: 'pointer', 
-                                fontSize: '20px', 
-                                color: star <= (ratings[c.id] || 0) ? '#eab308' : '#cbd5e1',
-                                transition: 'color 0.15s'
-                              }}
-                              onClick={() => handleSetRating(c.id, star)}
-                            >
-                              ★
-                            </span>
-                          ))}
+                        <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>
+                          Defect Subtype
+                        </span>
+                        <strong style={{ fontSize: '12.5px', color: 'var(--text-primary)' }}>
+                          {c.wasteType || 'Standard'}
+                        </strong>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>
+                          Volume / Scale
+                        </span>
+                        <strong style={{ fontSize: '12.5px', color: 'var(--text-primary)' }}>
+                          {c.wasteVolume || 'Medium'}
+                        </strong>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: '700', display: 'block' }}>
+                          Problem Duration
+                        </span>
+                        <strong style={{ fontSize: '12.5px', color: 'var(--text-primary)' }}>
+                          {c.durationDays || 'Today'}
+                        </strong>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    {c.description && (
+                      <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', lineHeight: '1.5', margin: '0 0 14px 0' }}>
+                        {c.description}
+                      </p>
+                    )}
+
+                    {/* Progression Bar */}
+                    <div style={{ marginTop: '10px', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '700', color: '#64748b', marginBottom: '4px' }}>
+                        <span style={{ color: '#10b981' }}>✓ 1. AI Audited</span>
+                        <span style={{ color: inProgress || isResolved ? '#2563eb' : '#94a3b8' }}>{inProgress || isResolved ? '✓' : '•'} 2. Crew Dispatched</span>
+                        <span style={{ color: isResolved ? '#10b981' : '#94a3b8' }}>{isResolved ? '✓' : '•'} 3. Resolved on Site</span>
+                      </div>
+                      <div className="progress" style={{ height: '5px', backgroundColor: 'rgba(15, 23, 42, 0.08)' }}>
+                        <div 
+                          className="progress-bar" 
+                          style={{ 
+                            width: isResolved ? '100%' : (inProgress ? '60%' : '30%'),
+                            backgroundColor: isResolved ? '#10b981' : (inProgress ? '#2563eb' : '#f59e0b')
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    {/* Resolution Section & Ratings */}
+                    {isResolved && (
+                      <div style={{
+                        marginTop: '16px',
+                        padding: '14px',
+                        borderRadius: '14px',
+                        backgroundColor: 'rgba(16, 185, 129, 0.06)',
+                        border: '1px solid rgba(16, 185, 129, 0.2)'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '16px' }}>🎉</span>
+                          <strong style={{ fontSize: '13px', color: '#065f46' }}>Ward Remediation Verified & Closed</strong>
                         </div>
-                        <textarea
-                          placeholder="Share remarks on how quickly the ward team solved this issue..."
-                          style={{
-                            width: '100%',
-                            border: '1px solid rgba(15, 23, 42, 0.12)',
-                            borderRadius: '10px',
-                            padding: '8px 12px',
-                            fontSize: '12px',
-                            backgroundColor: '#ffffff',
-                            color: '#0f172a',
-                            outline: 'none',
-                            resize: 'none',
-                            height: '55px',
-                          }}
-                          value={comments[c.id] || ''}
-                          onChange={(e) => handleSetComment(c.id, e.target.value)}
-                        />
-                        <button
-                          style={{
-                            marginTop: '8px',
-                            backgroundColor: '#6366f1',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '8px',
-                            padding: '6px 14px',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            cursor: 'pointer',
-                            boxShadow: '0 2px 6px rgba(99, 102, 241, 0.15)',
-                            transition: 'all 0.2s',
-                          }}
-                          className="btn-submit-hover"
-                          onClick={() => handleSubmitFeedback(c.id)}
-                        >
-                          Submit Citizen Rating
-                        </button>
+                        {c.resolutionPhotoUrl && (
+                          <div style={{ marginBottom: '10px' }}>
+                            <span style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>After-Fix Evidence Photo:</span>
+                            <img src={c.resolutionPhotoUrl} alt="Fixed" style={{ width: '90px', height: '90px', borderRadius: '8px', objectFit: 'cover' }} />
+                          </div>
+                        )}
+                        
+                        {hasFeedback ? (
+                          <div style={{ fontSize: '12px', color: '#047857', marginTop: '6px' }}>
+                            <span>Citizen Rating: {'⭐'.repeat(c.rating || 5)}</span>
+                            {c.comment && <div style={{ fontStyle: 'italic', marginTop: '2px', color: '#64748b' }}>"{c.comment}"</div>}
+                          </div>
+                        ) : (
+                          <div style={{ marginTop: '10px' }}>
+                            <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>
+                              Rate Ward Team Resolution:
+                            </span>
+                            <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                  key={star}
+                                  style={{ 
+                                    cursor: 'pointer', 
+                                    fontSize: '20px', 
+                                    color: star <= (ratings[c.id] || 0) ? '#eab308' : '#cbd5e1',
+                                    transition: 'color 0.15s'
+                                  }}
+                                  onClick={() => handleSetRating(c.id, star)}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                            <textarea
+                              placeholder="Share remarks on how quickly the ward team solved this issue..."
+                              style={{
+                                width: '100%',
+                                border: '1px solid rgba(15, 23, 42, 0.12)',
+                                borderRadius: '10px',
+                                padding: '8px 12px',
+                                fontSize: '12px',
+                                backgroundColor: '#ffffff',
+                                color: '#0f172a',
+                                outline: 'none',
+                                resize: 'none',
+                                height: '55px',
+                              }}
+                              value={comments[c.id] || ''}
+                              onChange={(e) => handleSetComment(c.id, e.target.value)}
+                            />
+                            <button
+                              style={{
+                                marginTop: '8px',
+                                backgroundColor: '#6366f1',
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '6px 14px',
+                                fontSize: '12px',
+                                fontWeight: '700',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 6px rgba(99, 102, 241, 0.15)',
+                                transition: 'all 0.2s',
+                              }}
+                              className="btn-submit-hover"
+                              onClick={() => handleSubmitFeedback(c.id)}
+                            >
+                              Submit Citizen Rating
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-                )}
+                );
+              })
+            )}
+          </div>
+
+          {/* RIGHT COLUMN: Ticket Summary Analytics & SLA Hotline */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            
+            {/* Live Stats Card */}
+            <div className="glass-card-detailed" style={{ padding: '22px' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: 'var(--text-primary, #0f172a)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📊</span> Grievance Overview
+              </h4>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                <div style={{ padding: '12px', background: 'rgba(99, 102, 241, 0.08)', borderRadius: '12px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '22px', fontWeight: '900', color: '#4f46e5', display: 'block' }}>
+                    {complaints.length}
+                  </span>
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: '#64748b' }}>Total Raised</span>
+                </div>
+                <div style={{ padding: '12px', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '12px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '22px', fontWeight: '900', color: '#10b981', display: 'block' }}>
+                    {complaints.filter(c => c.status.toLowerCase() === 'resolved').length}
+                  </span>
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: '#047857' }}>Resolved</span>
+                </div>
+                <div style={{ padding: '12px', background: 'rgba(59, 130, 246, 0.08)', borderRadius: '12px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '22px', fontWeight: '900', color: '#2563eb', display: 'block' }}>
+                    {complaints.filter(c => c.status.toLowerCase() === 'in progress').length}
+                  </span>
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: '#1d4ed8' }}>In Progress</span>
+                </div>
+                <div style={{ padding: '12px', background: 'rgba(245, 158, 11, 0.08)', borderRadius: '12px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '22px', fontWeight: '900', color: '#d97706', display: 'block' }}>
+                    {complaints.filter(c => c.status.toLowerCase() === 'pending').length}
+                  </span>
+                  <span style={{ fontSize: '11px', fontWeight: '700', color: '#b45309' }}>Pending</span>
+                </div>
               </div>
-            );
-          })
-        )}
+
+              <div style={{ padding: '12px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%)', borderRadius: '12px', fontSize: '12px', color: 'var(--text-primary, #0f172a)', lineHeight: '1.5' }}>
+                💡 <strong>Resolution Tip:</strong> Each resolved ticket awards <strong>+50 Swachh Credits</strong> to your Civic Karma wallet!
+              </div>
+            </div>
+
+            {/* Ward SLA Response Guarantee */}
+            <div className="glass-card-detailed" style={{ padding: '22px' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '12px', color: 'var(--text-primary, #0f172a)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>⏱️</span> Municipal Ward SLA Guidelines
+              </h4>
+              <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 12px 0', lineHeight: '1.5' }}>
+                All civic tickets are automatically dispatched to the nearest zonal squad based on your verified GPS coordinates.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', background: 'rgba(239, 68, 68, 0.06)', borderRadius: '8px' }}>
+                  <span>🚰 Water Pipeline Breach</span>
+                  <strong style={{ color: '#b91c1c' }}>2h Max</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', background: 'rgba(16, 185, 129, 0.06)', borderRadius: '8px' }}>
+                  <span>🗑️ Solid Waste Pileup</span>
+                  <strong style={{ color: '#047857' }}>4-8h</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', background: 'rgba(99, 102, 241, 0.06)', borderRadius: '8px' }}>
+                  <span>💡 Public Streetlight</span>
+                  <strong style={{ color: '#4338ca' }}>12h</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Emergency Hotline */}
+            <div className="glass-card-detailed" style={{ padding: '20px' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '8px', color: 'var(--text-primary, #0f172a)' }}>
+                🚨 Ward Emergency Hotline
+              </h4>
+              <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 12px 0' }}>
+                For open live wires, burst mains, or gas leaks, dial the 24x7 Gandhinagar Control Room.
+              </p>
+              <a href="tel:18002330333" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: '#ef4444', color: '#fff', borderRadius: '10px', fontWeight: '700', fontSize: '13px', textDecoration: 'none' }}>
+                <i className="bi bi-telephone-fill"></i> 1800-233-0333 (Toll Free)
+              </a>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
 
       <style jsx="true" global="true">{`
+        .tickets-grid-layout {
+          display: grid;
+          grid-template-columns: 1.4fr 1fr;
+          gap: 24px;
+          align-items: start;
+        }
+        @media (max-width: 960px) {
+          .tickets-grid-layout {
+            grid-template-columns: 1fr;
+          }
+        }
         .status-card:hover {
           transform: translateY(-2px);
           border-color: rgba(99, 102, 241, 0.25) !important;

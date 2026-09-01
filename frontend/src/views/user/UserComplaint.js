@@ -297,193 +297,267 @@ const UserComplaint = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: '16px 12px 80px 12px' }}>
-      <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+    <div style={{ minHeight: 'calc(100vh - 65px)', padding: '24px 20px 80px 20px' }}>
+      <div style={{ maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
         
         {/* Header bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', background: 'var(--card-bg, rgba(255,255,255,0.7))', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--card-border, rgba(15,23,42,0.08))', padding: '16px 20px', borderBottomLeftRadius: '20px', borderBottomRightRadius: '20px', boxShadow: 'var(--card-shadow, none)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: 'var(--text-primary, #0f172a)' }}><i className="bi bi-arrow-left"></i></button>
-            <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: 'var(--text-primary, #0f172a)' }}>Report Civic Defect</h3>
-          </div>
-          <div className="badge-strict-mode" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '800', color: '#4f46e5', backgroundColor: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', padding: '6px 12px', borderRadius: '10px', userSelect: 'none' }}>
-            <i className="bi bi-shield-check" style={{ fontSize: '14px', color: '#6366f1' }}></i>
-            <span>Strict AI Mode</span>
-            <span style={{ fontSize: '10px', background: '#6366f1', color: '#ffffff', padding: '1px 6px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Active</span>
-          </div>
-        </div>
-
-        {/* Citizen Profile Badge */}
-        <div style={{ background: 'rgba(99, 102, 241, 0.08)', borderRadius: '16px', padding: '14px', marginBottom: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#6366f1', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700' }}>
-              {currentUser?.name ? currentUser.name[0].toUpperCase() : 'U'}
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', background: 'var(--card-bg, rgba(255,255,255,0.7))', backdropFilter: 'blur(16px)', border: '1px solid var(--card-border, rgba(15,23,42,0.08))', padding: '16px 24px', borderRadius: '20px', boxShadow: '0 8px 30px rgba(15, 23, 42, 0.04)', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button onClick={() => navigate(-1)} style={{ background: 'rgba(99, 102, 241, 0.1)', border: 'none', width: '36px', height: '36px', borderRadius: '50%', fontSize: '18px', cursor: 'pointer', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><i className="bi bi-arrow-left"></i></button>
             <div>
-              <div style={{ fontWeight: '700', fontSize: '14px' }}>{currentUser?.name || 'Citizen'}</div>
-              <div style={{ fontSize: '11px', color: '#64748b' }}>{currentUser?.mobile} • {currentUser?.email}</div>
+              <h2 style={{ margin: 0, fontSize: '22px', fontWeight: '800', color: 'var(--text-primary, #0f172a)', letterSpacing: '-0.5px' }}>Report Civic Defect</h2>
+              <p style={{ margin: '2px 0 0 0', fontSize: '12.5px', color: '#64748b' }}>Gandhinagar Municipal Corporation • Smart Citizen Grievance Portal</p>
             </div>
           </div>
-          <span className="profile-ward-badge" style={{ fontSize: '11px', fontWeight: '700', color: '#4338ca', background: '#e0e7ff', padding: '4px 8px', borderRadius: '12px' }}>
-            📍 {currentUser?.ward || 'Sector 5'}, {currentUser?.city || 'Gandhinagar'}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="badge-strict-mode" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '800', color: '#4f46e5', backgroundColor: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', padding: '6px 14px', borderRadius: '12px', userSelect: 'none' }}>
+              <i className="bi bi-shield-check" style={{ fontSize: '14px', color: '#6366f1' }}></i>
+              <span>Strict AI Mode</span>
+              <span style={{ fontSize: '10px', background: '#6366f1', color: '#ffffff', padding: '2px 6px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Active</span>
+            </div>
+            <button onClick={() => navigate('/user/view-status')} style={{ background: 'rgba(15, 23, 42, 0.05)', border: '1px solid rgba(15, 23, 42, 0.1)', borderRadius: '12px', padding: '8px 16px', fontSize: '13px', fontWeight: '700', color: 'var(--text-primary, #0f172a)', cursor: 'pointer' }}>
+              📋 My Tickets
+            </button>
+          </div>
         </div>
 
-        {/* Form Card */}
-        <form onSubmit={handleSubmit} style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(16px)', borderRadius: '20px', padding: '24px', border: '1px solid rgba(15, 23, 42, 0.08)', boxShadow: '0 12px 35px rgba(15, 23, 42, 0.05)' }}>
+        {/* 2-Column Expansive Layout */}
+        <div className="complaint-grid-layout">
           
-          {/* STEP 1: Live GPS Location */}
-          <div className="location-step-box" style={{ padding: '16px', borderRadius: '16px', background: hasLocation ? 'rgba(16, 185, 129, 0.05)' : 'rgba(99, 102, 241, 0.05)', border: `1px solid ${hasLocation ? 'rgba(16,185,129,0.3)' : 'rgba(99,102,241,0.2)'}`, marginBottom: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <strong style={{ fontSize: '13px' }}>1. Verify Live GPS Location</strong>
-              {hasLocation && <span className="badge bg-success-subtle text-success border border-success-subtle">GPS Verified</span>}
-            </div>
-            <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 10px 0' }}>Enforces on-site reporting to eliminate online stock fraud.</p>
-            {hasLocation ? (
-              <div className="location-verified-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontWeight: '600', color: '#065f46' }}>
-                <span className="location-text">📍 {location}</span>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button type="button" onClick={handleUseProfileLocation} className="btn-link-action btn-link-profile" style={{ background: 'none', border: 'none', color: '#6366f1', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>Use Profile</button>
-                  <button type="button" onClick={handleDetectLiveLocation} className="btn-link-action btn-link-refresh" style={{ background: 'none', border: 'none', color: '#047857', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>Refresh</button>
+          {/* LEFT COLUMN: Grievance Reporting Form */}
+          <div>
+            <form onSubmit={handleSubmit} style={{ background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(16px)', borderRadius: '24px', padding: '28px', border: '1px solid rgba(15, 23, 42, 0.08)', boxShadow: '0 12px 35px rgba(15, 23, 42, 0.05)' }}>
+              
+              {/* STEP 1: Live GPS Location */}
+              <div className="location-step-box" style={{ padding: '18px', borderRadius: '18px', background: hasLocation ? 'rgba(16, 185, 129, 0.06)' : 'rgba(99, 102, 241, 0.06)', border: `1px solid ${hasLocation ? 'rgba(16,185,129,0.3)' : 'rgba(99,102,241,0.2)'}`, marginBottom: '18px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <strong style={{ fontSize: '14px', color: 'var(--text-primary, #0f172a)' }}>1. Verify Live GPS Location</strong>
+                  {hasLocation && <span className="badge-pill-detailed badge-pill-emerald">GPS Verified</span>}
                 </div>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button type="button" onClick={handleDetectLiveLocation} disabled={isLocating} style={{ flex: 1, padding: '10px', background: '#6366f1', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>
-                  {isLocating ? 'Detecting GPS...' : '📍 Detect Live GPS'}
-                </button>
-                <button type="button" onClick={handleUseProfileLocation} disabled={isLocating} style={{ padding: '10px 16px', background: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: '10px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>
-                  Use Profile Address
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* STEP 2: Live Camera & Photo Upload */}
-          <div className="camera-step-box" style={{ padding: '16px', borderRadius: '16px', border: '1px solid rgba(15, 23, 42, 0.08)', marginBottom: '16px', opacity: hasLocation ? 1 : 0.6 }}>
-            <strong style={{ fontSize: '13px', display: 'block', marginBottom: '8px' }}>2. On-Site Camera Capture & AI Audit</strong>
-            {rejectionError && <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(239, 68, 68, 0.1)', color: '#b91c1c', fontSize: '12px', marginBottom: '10px' }}>⚠️ {rejectionError}</div>}
-            
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <button type="button" onClick={() => startCamera('environment')} disabled={!hasLocation} className="btn-camera-trigger" style={{ padding: '16px 8px', borderRadius: '12px', border: '2px solid #6366f1', background: 'rgba(99, 102, 241, 0.08)', color: '#4338ca', cursor: 'pointer', textAlign: 'center' }}>
-                <i className="bi bi-camera-fill" style={{ fontSize: '24px', display: 'block', marginBottom: '4px' }}></i>
-                <span style={{ fontSize: '12px', fontWeight: '700' }}>Open Live Camera</span>
-              </button>
-              <label className="upload-box-trigger" style={{ padding: '16px 8px', borderRadius: '12px', border: '2px dashed rgba(99, 102, 241, 0.4)', background: 'rgba(255, 255, 255, 0.6)', color: '#475569', cursor: 'pointer', textAlign: 'center', margin: 0 }}>
-                <i className="bi bi-folder2-open" style={{ fontSize: '24px', display: 'block', marginBottom: '4px' }}></i>
-                <span style={{ fontSize: '12px', fontWeight: '700', display: 'block' }}>{photo ? photo.name.slice(0, 16) : 'Upload Photo'}</span>
-                <input type="file" hidden accept="image/*" capture="environment" onChange={handleFileUpload} disabled={!hasLocation} />
-              </label>
-            </div>
-
-            {/* AI Progress */}
-            {isScanning && (
-              <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                <div className="spinner-border text-primary spinner-border-sm" role="status"></div>
-                <div style={{ fontSize: '12px', fontWeight: '700', color: '#4f46e5', marginTop: '6px' }}>{scanStep}</div>
-                <div className="progress mt-2" style={{ height: '5px' }}><div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: `${scanProgress}%`, background: '#6366f1' }}></div></div>
-              </div>
-            )}
-
-            {/* Badges */}
-            {isVerified && photoPreview && (
-              <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {!hasCivicIssue && (
-                  <div style={{ fontSize: '12px', fontWeight: '800', color: '#b91c1c', background: 'rgba(239, 68, 68, 0.1)', padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.2)', width: '100%' }}>
-                    🚨 REJECTED: {rejectionReason || 'No municipal issue detected in this photo.'}
-                  </div>
-                )}
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <img src={photoPreview} alt="Defect" style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
-                  <div>
-                    <div className="badge-ai-auth" style={{ fontSize: '11px', fontWeight: '700', color: '#065f46', background: 'rgba(16, 185, 129, 0.1)', padding: '3px 8px', borderRadius: '6px', marginBottom: '4px' }}>
-                      <i className="bi bi-patch-check-fill text-success"></i> {authenticityBadgeText}
-                    </div>
-                    <div className="badge-ai-dup" style={{ fontSize: '11px', fontWeight: '700', color: duplicateWarning ? '#b91c1c' : '#1e40af', background: duplicateWarning ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)', padding: '3px 8px', borderRadius: '6px' }}>
-                      <i className="bi bi-info-circle-fill"></i> {duplicateBadgeText}
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 12px 0' }}>Enforces on-site reporting to eliminate online stock photo fraud and routes directly to your ward squad.</p>
+                {hasLocation ? (
+                  <div className="location-verified-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', fontWeight: '600', color: '#065f46', background: '#fff', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                    <span className="location-text">📍 {location}</span>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <button type="button" onClick={handleUseProfileLocation} className="btn-link-action btn-link-profile" style={{ background: 'none', border: 'none', color: '#6366f1', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>Use Profile</button>
+                      <button type="button" onClick={handleDetectLiveLocation} className="btn-link-action btn-link-refresh" style={{ background: 'none', border: 'none', color: '#047857', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>Refresh</button>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* STEP 3: AI Auto-Populated Parameters */}
-          {isVerified && (
-            <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-              <div className="mb-3">
-                <label style={{ fontSize: '12px', fontWeight: '700', color: '#334155' }}>Category (AI Auto-Selected)</label>
-                <select className="form-select form-select-sm mt-1" value={category} onChange={e => setCategory(e.target.value)} required>
-                  <option value="Garbage / Waste">🗑️ Garbage / Solid Waste</option>
-                  <option value="Road Damage">🚧 Road Damage & Potholes</option>
-                  <option value="Water Issue">🚰 Water Issue (Leaking/Pipe)</option>
-                  <option value="Streetlights">💡 Streetlight & Electrical</option>
-                  <option value="Drainage & Sewerage">🌊 Drainage & Sewerage</option>
-                  <option value="Public Toilet Issue">🚽 Public Toilet Sanitation</option>
-                </select>
-              </div>
-
-              <div className="row g-2 mb-3">
-                <div className="col-6">
-                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#334155' }}>Defect Subtype</label>
-                  <input type="text" className="form-control form-control-sm mt-1" value={wasteType} onChange={e => setWasteType(e.target.value)} required />
-                </div>
-                <div className="col-6">
-                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#334155' }}>Volume / Scale</label>
-                  <input type="text" className="form-control form-control-sm mt-1" value={wasteVolume} onChange={e => setWasteVolume(e.target.value)} required />
-                </div>
-              </div>
-
-              <div className="mb-3">
-                <label style={{ fontSize: '12px', fontWeight: '700', color: '#334155' }}>Problem Duration</label>
-                <select className="form-select form-select-sm mt-1" value={durationDays} onChange={e => setDurationDays(e.target.value)}>
-                  <option value="Today">Today / Just noticed</option>
-                  <option value="1-2 days ago">1 to 2 days ago</option>
-                  <option value="3-5 days ago">3 to 5 days ago</option>
-                  <option value="More than a week ago">More than a week ago</option>
-                </select>
-              </div>
-
-              {/* Multilingual Voice Remarks */}
-              <div className="mb-3">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: '700', color: '#334155', margin: 0 }}>Details & Remarks</label>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <select value={speechLang} onChange={e => setSpeechLang(e.target.value)} style={{ fontSize: '11px', fontWeight: '700', borderRadius: '6px', padding: '2px 6px', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#4338ca' }}>
-                      <option value="gu-IN">ગુજરાતી (Gujarati)</option>
-                      <option value="hi-IN">हिंदी (Hindi)</option>
-                      <option value="en-IN">English (India)</option>
-                    </select>
-                    <button type="button" onClick={toggleSpeechRecognition} style={{ background: isListening ? '#ef4444' : '#6366f1', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: '700', padding: '3px 8px', cursor: 'pointer' }}>
-                      <i className={`bi ${isListening ? 'bi-mic-fill' : 'bi-mic'}`}></i> {isListening ? 'Listening...' : 'Voice Input'}
+                ) : (
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button type="button" onClick={handleDetectLiveLocation} disabled={isLocating} style={{ flex: 1, padding: '12px', background: '#6366f1', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 14px rgba(99,102,241,0.3)' }}>
+                      {isLocating ? 'Detecting GPS Satellite...' : '📍 Detect Live GPS Coordinates'}
+                    </button>
+                    <button type="button" onClick={handleUseProfileLocation} disabled={isLocating} style={{ padding: '12px 18px', background: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: '12px', fontSize: '14px', fontWeight: '700', cursor: 'pointer' }}>
+                      Use Profile Address
                     </button>
                   </div>
-                </div>
-                <textarea className="form-control form-control-sm" rows="3" value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe landmarks or click 'Voice Input' to speak in Gujarati/Hindi..." required />
+                )}
               </div>
 
-              <button 
-                type="submit" 
-                disabled={isSubmitting || isSubmissionBlocked} 
-                style={{ 
-                  width: '100%', 
-                  padding: '14px', 
-                  background: isSubmissionBlocked ? '#94a3b8' : '#6366f1', 
-                  color: '#fff', 
-                  border: 'none', 
-                  borderRadius: '12px', 
-                  fontSize: '15px', 
-                  fontWeight: '700', 
-                  cursor: isSubmissionBlocked ? 'not-allowed' : 'pointer', 
-                  boxShadow: isSubmissionBlocked ? 'none' : '0 4px 15px rgba(99, 102, 241, 0.3)' 
-                }}
-              >
-                {isSubmitting ? 'Raising Ticket...' : isSubmissionBlocked ? '🚫 Submission Blocked (AI Rejection)' : '🚀 Raise Official Municipal Ticket (+50 Credits)'}
-              </button>
+              {/* STEP 2: Live Camera & Photo Upload */}
+              <div className="camera-step-box" style={{ padding: '18px', borderRadius: '18px', border: '1px solid rgba(15, 23, 42, 0.08)', marginBottom: '18px', opacity: hasLocation ? 1 : 0.6 }}>
+                <strong style={{ fontSize: '14px', display: 'block', marginBottom: '8px', color: 'var(--text-primary, #0f172a)' }}>2. On-Site Camera Capture & AI Computer Vision Audit</strong>
+                {rejectionError && <div style={{ padding: '12px', borderRadius: '12px', background: 'rgba(239, 68, 68, 0.1)', color: '#b91c1c', fontSize: '13px', marginBottom: '12px', border: '1px solid rgba(239,68,68,0.2)' }}>⚠️ {rejectionError}</div>}
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <button type="button" onClick={() => startCamera('environment')} disabled={!hasLocation} className="btn-camera-trigger" style={{ padding: '18px 12px', borderRadius: '14px', border: '2px solid #6366f1', background: 'rgba(99, 102, 241, 0.08)', color: '#4338ca', cursor: 'pointer', textAlign: 'center' }}>
+                    <i className="bi bi-camera-fill" style={{ fontSize: '26px', display: 'block', marginBottom: '4px' }}></i>
+                    <span style={{ fontSize: '13px', fontWeight: '700' }}>Open Live Camera</span>
+                  </button>
+                  <label className="upload-box-trigger" style={{ padding: '18px 12px', borderRadius: '14px', border: '2px dashed rgba(99, 102, 241, 0.4)', background: 'rgba(255, 255, 255, 0.6)', color: '#475569', cursor: 'pointer', textAlign: 'center', margin: 0 }}>
+                    <i className="bi bi-folder2-open" style={{ fontSize: '26px', display: 'block', marginBottom: '4px', color: '#6366f1' }}></i>
+                    <span style={{ fontSize: '13px', fontWeight: '700', display: 'block' }}>{photo ? photo.name.slice(0, 18) : 'Upload Local Photo'}</span>
+                    <input type="file" hidden accept="image/*" capture="environment" onChange={handleFileUpload} disabled={!hasLocation} />
+                  </label>
+                </div>
+
+                {/* AI Progress */}
+                {isScanning && (
+                  <div style={{ marginTop: '14px', textAlign: 'center', background: 'rgba(99, 102, 241, 0.05)', padding: '14px', borderRadius: '14px' }}>
+                    <div className="spinner-border text-primary spinner-border-sm" role="status"></div>
+                    <div style={{ fontSize: '13px', fontWeight: '700', color: '#4f46e5', marginTop: '6px' }}>{scanStep}</div>
+                    <div className="progress mt-2" style={{ height: '6px' }}><div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: `${scanProgress}%`, background: '#6366f1' }}></div></div>
+                  </div>
+                )}
+
+                {/* Badges */}
+                {isVerified && photoPreview && (
+                  <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {!hasCivicIssue && (
+                      <div style={{ fontSize: '13px', fontWeight: '800', color: '#b91c1c', background: 'rgba(239, 68, 68, 0.1)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)', width: '100%' }}>
+                        🚨 REJECTED: {rejectionReason || 'No municipal issue detected in this photo.'}
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', gap: '14px', alignItems: 'center', background: '#fff', padding: '12px', borderRadius: '14px', border: '1px solid rgba(15, 23, 42, 0.08)' }}>
+                      <img src={photoPreview} alt="Defect" style={{ width: '70px', height: '70px', borderRadius: '10px', objectFit: 'cover' }} />
+                      <div>
+                        <div className="badge-ai-auth" style={{ fontSize: '11.5px', fontWeight: '700', color: '#065f46', background: 'rgba(16, 185, 129, 0.1)', padding: '4px 10px', borderRadius: '8px', marginBottom: '6px' }}>
+                          <i className="bi bi-patch-check-fill text-success"></i> {authenticityBadgeText}
+                        </div>
+                        <div className="badge-ai-dup" style={{ fontSize: '11.5px', fontWeight: '700', color: duplicateWarning ? '#b91c1c' : '#1e40af', background: duplicateWarning ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)', padding: '4px 10px', borderRadius: '8px' }}>
+                          <i className="bi bi-info-circle-fill"></i> {duplicateBadgeText}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* STEP 3: AI Auto-Populated Parameters */}
+              {isVerified && (
+                <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+                  <div className="mb-3">
+                    <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary, #0f172a)' }}>Category (AI Auto-Selected)</label>
+                    <select className="form-select mt-1" value={category} onChange={e => setCategory(e.target.value)} required style={{ borderRadius: '12px', padding: '10px 14px', fontSize: '14px' }}>
+                      <option value="Garbage / Waste">🗑️ Garbage / Solid Waste</option>
+                      <option value="Road Damage">🚧 Road Damage & Potholes</option>
+                      <option value="Water Issue">🚰 Water Issue (Leaking/Pipe)</option>
+                      <option value="Streetlights">💡 Streetlight & Electrical</option>
+                      <option value="Drainage & Sewerage">🌊 Drainage & Sewerage</option>
+                      <option value="Public Toilet Issue">🚽 Public Toilet Sanitation</option>
+                    </select>
+                  </div>
+
+                  <div className="row g-2 mb-3">
+                    <div className="col-6">
+                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-primary, #0f172a)' }}>Defect Subtype</label>
+                      <input type="text" className="form-control mt-1" value={wasteType} onChange={e => setWasteType(e.target.value)} required style={{ borderRadius: '10px' }} />
+                    </div>
+                    <div className="col-6">
+                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-primary, #0f172a)' }}>Volume / Scale</label>
+                      <input type="text" className="form-control mt-1" value={wasteVolume} onChange={e => setWasteVolume(e.target.value)} required style={{ borderRadius: '10px' }} />
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary, #0f172a)' }}>Problem Duration</label>
+                    <select className="form-select mt-1" value={durationDays} onChange={e => setDurationDays(e.target.value)} style={{ borderRadius: '12px' }}>
+                      <option value="Today">Today / Just noticed</option>
+                      <option value="1-2 days ago">1 to 2 days ago</option>
+                      <option value="3-5 days ago">3 to 5 days ago</option>
+                      <option value="More than a week ago">More than a week ago</option>
+                    </select>
+                  </div>
+
+                  {/* Multilingual Voice Remarks */}
+                  <div className="mb-3">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary, #0f172a)', margin: 0 }}>Details & Landmarks</label>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <select value={speechLang} onChange={e => setSpeechLang(e.target.value)} style={{ fontSize: '11px', fontWeight: '700', borderRadius: '8px', padding: '4px 8px', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#4338ca' }}>
+                          <option value="gu-IN">ગુજરાતી (Gujarati)</option>
+                          <option value="hi-IN">हिंदी (Hindi)</option>
+                          <option value="en-IN">English (India)</option>
+                        </select>
+                        <button type="button" onClick={toggleSpeechRecognition} style={{ background: isListening ? '#ef4444' : '#6366f1', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: '700', padding: '4px 10px', cursor: 'pointer' }}>
+                          <i className={`bi ${isListening ? 'bi-mic-fill' : 'bi-mic'}`}></i> {isListening ? 'Listening...' : 'Voice Input'}
+                        </button>
+                      </div>
+                    </div>
+                    <textarea className="form-control" rows="3" value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe nearby landmarks or click 'Voice Input' to speak in Gujarati/Hindi..." required style={{ borderRadius: '12px' }} />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting || isSubmissionBlocked} 
+                    style={{ 
+                      width: '100%', 
+                      padding: '14px', 
+                      background: isSubmissionBlocked ? '#94a3b8' : '#6366f1', 
+                      color: '#fff', 
+                      border: 'none', 
+                      borderRadius: '14px', 
+                      fontSize: '16px', 
+                      fontWeight: '800', 
+                      cursor: isSubmissionBlocked ? 'not-allowed' : 'pointer', 
+                      boxShadow: isSubmissionBlocked ? 'none' : '0 4px 18px rgba(99, 102, 241, 0.35)' 
+                    }}
+                  >
+                    {isSubmitting ? 'Raising Ticket...' : isSubmissionBlocked ? '🚫 Submission Blocked (AI Rejection)' : '🚀 Raise Official Municipal Ticket (+50 Credits)'}
+                  </button>
+                </div>
+              )}
+            </form>
+          </div>
+
+          {/* RIGHT COLUMN: Citizen Profile, SLAs, and Municipal Guidelines */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            
+            {/* Citizen Profile Card */}
+            <div className="glass-card-detailed" style={{ padding: '22px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '18px' }}>
+                  {currentUser?.name ? currentUser.name[0].toUpperCase() : 'U'}
+                </div>
+                <div>
+                  <div style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-primary, #0f172a)' }}>{currentUser?.name || 'Citizen'}</div>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>{currentUser?.mobile} • {currentUser?.email}</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(99, 102, 241, 0.06)', borderRadius: '12px', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+                <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted, #64748b)' }}>Assigned Municipal Ward</span>
+                <span style={{ fontSize: '12px', fontWeight: '800', color: '#4f46e5' }}>📍 {currentUser?.ward || 'Sector 5'}, {currentUser?.city || 'Gandhinagar'}</span>
+              </div>
             </div>
-          )}
-        </form>
+
+            {/* Municipal SLA Resolution Guarantee Card */}
+            <div className="glass-card-detailed" style={{ padding: '22px' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '14px', color: 'var(--text-primary, #0f172a)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>⏱️</span> Official Municipal SLA Targets
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px', padding: '8px 12px', background: 'rgba(239, 68, 68, 0.06)', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
+                  <span style={{ fontWeight: '700', color: 'var(--text-primary, #0f172a)' }}>🚰 Water Pipeline Breach</span>
+                  <span className="badge-pill-detailed badge-pill-amber">2 Hours</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px', padding: '8px 12px', background: 'rgba(16, 185, 129, 0.06)', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.15)' }}>
+                  <span style={{ fontWeight: '700', color: 'var(--text-primary, #0f172a)' }}>🗑️ Garbage Pileup Dump</span>
+                  <span className="badge-pill-detailed badge-pill-emerald">4 - 8 Hours</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px', padding: '8px 12px', background: 'rgba(99, 102, 241, 0.06)', borderRadius: '10px', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+                  <span style={{ fontWeight: '700', color: 'var(--text-primary, #0f172a)' }}>💡 Streetlight Outage</span>
+                  <span className="badge-pill-detailed badge-pill-indigo">12 Hours</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px', padding: '8px 12px', background: 'rgba(99, 102, 241, 0.06)', borderRadius: '10px', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+                  <span style={{ fontWeight: '700', color: 'var(--text-primary, #0f172a)' }}>🚧 Road Potholes / Cave-in</span>
+                  <span className="badge-pill-detailed badge-pill-indigo">24 - 48 Hours</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Strict AI Rules Widget */}
+            <div className="glass-card-detailed" style={{ padding: '22px' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: '800', marginBottom: '12px', color: 'var(--text-primary, #0f172a)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>🛡️</span> Strict AI Fraud Prevention
+              </h4>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted, #64748b)', margin: '0 0 10px 0', lineHeight: '1.5' }}>
+                Photos must show real public defects. Pictures of cars, shoes, clothes, indoor furniture, or computer screens will be rejected.
+              </p>
+              <div style={{ fontSize: '11.5px', color: '#059669', background: 'rgba(16, 185, 129, 0.08)', padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                ✅ Verified submissions award <strong>+50 Swachh citizen points</strong>!
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
+
+      <style jsx="true" global="true">{`
+        .complaint-grid-layout {
+          display: grid;
+          grid-template-columns: 1.4fr 1fr;
+          gap: 24px;
+          align-items: start;
+        }
+        @media (max-width: 900px) {
+          .complaint-grid-layout {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
 
       {/* Camera Viewfinder Modal */}
       {isCameraOpen && (

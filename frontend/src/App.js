@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.js';
 import { ThemeProvider } from './context/ThemeContext.js';
+import { NotificationProvider } from './context/NotificationContext.js';
 import GlobalHeader from './components/GlobalHeader.js';
 
 // Views
@@ -36,44 +37,46 @@ import AdminSettings from './views/admin/AdminSettings.js';
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <GlobalHeader />
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/select-role" element={<SelectRole />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faqs" element={<Faqs />} />
-            <Route path="/how-to-use" element={<HowToUse />} />
+      <NotificationProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <GlobalHeader />
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/select-role" element={<SelectRole />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faqs" element={<Faqs />} />
+              <Route path="/how-to-use" element={<HowToUse />} />
 
-            {/* User Routes */}
-            <Route path="/user/login" element={<UserLogin />} />
-            <Route path="/user/register" element={<UserRegister />} />
-            <Route path="/user/dashboard" element={<UserDashboard />} />
-            <Route path="/user/complaint" element={<UserComplaint />} />
-            <Route path="/user/view-status" element={<ViewStatus />} />
-            <Route path="/user/leaderboard" element={<Leaderboard />} />
-            <Route path="/user/toilet-tracker" element={<ToiletTracker />} />
-            <Route path="/user/alerts" element={<AlertsPage />} />
-            <Route path="/user/notifications" element={<Notifications />} />
-            <Route path="/user/profile" element={<Profile />} />
-            <Route path="/user/feedback" element={<Feedback />} />
-            <Route path="/user/search" element={<Search />} />
-            <Route path="/user/info-center" element={<InfoCenter />} />
-            <Route path="/user/settings" element={<Settings />} />
+              {/* User Routes */}
+              <Route path="/user/login" element={<UserLogin />} />
+              <Route path="/user/register" element={<UserRegister />} />
+              <Route path="/user/dashboard" element={<UserDashboard />} />
+              <Route path="/user/complaint" element={<UserComplaint />} />
+              <Route path="/user/view-status" element={<ViewStatus />} />
+              <Route path="/user/leaderboard" element={<Leaderboard />} />
+              <Route path="/user/toilet-tracker" element={<ToiletTracker />} />
+              <Route path="/user/alerts" element={<AlertsPage />} />
+              <Route path="/user/notifications" element={<Notifications />} />
+              <Route path="/user/profile" element={<Profile />} />
+              <Route path="/user/feedback" element={<Feedback />} />
+              <Route path="/user/search" element={<Search />} />
+              <Route path="/user/info-center" element={<InfoCenter />} />
+              <Route path="/user/settings" element={<Settings />} />
 
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/analytics" element={<AdminAnalytics />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
 
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </NotificationProvider>
     </ThemeProvider>
   );
 }

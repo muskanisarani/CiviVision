@@ -1,10 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import { useNotification } from '../../context/NotificationContext';
 import '../../styles/user.css';
 
 const UserRegister = () => {
   const { registerUser, sendOTP } = useContext(AuthContext);
+  const { showToast, showAlert } = useNotification();
   const navigate = useNavigate();
 
   // Step 1: Details, Step 2: OTP Verification
@@ -25,7 +27,6 @@ const UserRegister = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [alertMessage, setAlertMessage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [otpNotice, setOtpNotice] = useState(null);
 
@@ -47,15 +48,27 @@ const UserRegister = () => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setAlertMessage('Passwords do not match. Please verify and try again.');
+      showAlert({
+        title: 'Password Mismatch',
+        message: 'The confirmation password does not match. Please verify and try again.',
+        type: 'warning'
+      });
       return;
     }
     if (mobile.length !== 10) {
-      setAlertMessage('Mobile number must be exactly 10 digits.');
+      showAlert({
+        title: 'Invalid Mobile Number',
+        message: 'Please enter a valid 10-digit mobile phone number.',
+        type: 'warning'
+      });
       return;
     }
     if (password.length < 6) {
-      setAlertMessage('Password must be at least 6 characters.');
+      showAlert({
+        title: 'Short Password',
+        message: 'Security password must be at least 6 characters in length.',
+        type: 'warning'
+      });
       return;
     }
 
@@ -71,8 +84,13 @@ const UserRegister = () => {
       if (result.devOtp) {
         setDevOtp(result.devOtp);
       }
+      showToast('6-digit verification code dispatched to your email!', 'success');
     } else {
-      setAlertMessage(result.error || 'Failed to dispatch verification code. Please check your email address.');
+      showAlert({
+        title: 'Registration Notice',
+        message: result.error || 'Failed to dispatch verification code. Please check your email address.',
+        type: 'error'
+      });
     }
   };
 
@@ -89,8 +107,13 @@ const UserRegister = () => {
       if (result.devOtp) {
         setDevOtp(result.devOtp);
       }
+      showToast('Fresh OTP code sent to your email!', 'info');
     } else {
-      setAlertMessage(result.error || 'Failed to resend code.');
+      showAlert({
+        title: 'Resend Failed',
+        message: result.error || 'Failed to resend code.',
+        type: 'error'
+      });
     }
   };
 
@@ -98,7 +121,11 @@ const UserRegister = () => {
   const handleVerifyAndRegister = async (e) => {
     e.preventDefault();
     if (!otp || otp.trim().length !== 6) {
-      setAlertMessage('Please enter the full 6-digit verification code sent to your email.');
+      showAlert({
+        title: 'Incomplete Verification Code',
+        message: 'Please enter the complete 6-digit code received in your email.',
+        type: 'warning'
+      });
       return;
     }
 
@@ -107,6 +134,7 @@ const UserRegister = () => {
     setIsSubmitting(false);
 
     if (success) {
+      showToast('🎉 Account registered successfully! +50 Swachh Credits earned.', 'success');
       navigate('/user/dashboard');
     }
   };
@@ -414,23 +442,6 @@ const UserRegister = () => {
         </div>
 
       </div>
-
-      {/* CUSTOM ALERT MODAL */}
-      {alertMessage && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, padding: '16px' }}>
-          <div className="glass-card-detailed" style={{ maxWidth: '400px', width: '100%', textAlign: 'center', padding: '28px' }}>
-            <div style={{ fontSize: '32px', marginBottom: '8px' }}>⚠️</div>
-            <h4 style={{ fontWeight: '800', color: 'var(--text-primary, #0f172a)', margin: '0 0 8px 0' }}>Registration Notice</h4>
-            <p style={{ color: 'var(--text-muted, #64748b)', fontSize: '13.5px', marginBottom: '20px' }}>{alertMessage}</p>
-            <button 
-              style={{ background: '#6366f1', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 24px', fontSize: '14px', fontWeight: '700', cursor: 'pointer' }}
-              onClick={() => setAlertMessage(null)}
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
 
       <style jsx="true" global="true">{`
         .auth-split-layout {

@@ -20,7 +20,7 @@ const HowToUse = () => {
 
   return (
     <div style={{ minHeight: 'calc(100vh - 65px)', padding: '24px 20px 80px 20px' }}>
-      <div style={{ maxWidth: '1350px', width: '100%', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1440px', width: '100%', margin: '0 auto' }}>
         
         {/* Header Bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
