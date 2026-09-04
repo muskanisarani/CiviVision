@@ -37,7 +37,8 @@ const NON_CIVIC_KEYWORDS = [
 const CIVIC_DEFECT_KEYWORDS = [
   'ashcan', 'trash can', 'garbage can', 'wastebin', 'dustbin', 'refuse bin',
   'pothole', 'street sign', 'drain', 'sewer', 'gutter', 'street light', 'lamp post', 'manhole',
-  'debris', 'rubble', 'construction'
+  'debris', 'rubble', 'construction', 'brick', 'tile', 'paver', 'paving', 'stone', 'sand', 'gravel',
+  'curb', 'sidewalk', 'footpath', 'street', 'road', 'dirt', 'earth', 'ground', 'concrete', 'asphalt', 'wall'
 ];
 
 /**
@@ -59,7 +60,7 @@ export async function auditImageWithMobileNet(base64Image) {
       return { isCivicDefect: true, label: 'Unclassified capture' };
     }
 
-    // Check top 3 predictions for any non-civic item
+    // Check top predictions for any non-civic item
     for (const pred of predictions) {
       const predName = pred.className.toLowerCase();
       const predProb = pred.probability;
@@ -67,7 +68,8 @@ export async function auditImageWithMobileNet(base64Image) {
       const isNonCivic = NON_CIVIC_KEYWORDS.some(kw => predName.includes(kw));
       const isCivic = CIVIC_DEFECT_KEYWORDS.some(kw => predName.includes(kw));
 
-      if (isNonCivic && !isCivic && predProb > 0.15) {
+      // Only reject if it's strongly a non-civic private item (> 40% confidence) and not an outdoor/civic scene
+      if (isNonCivic && !isCivic && predProb > 0.40) {
         let cleanName = pred.className.split(',')[0].trim();
         cleanName = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
 
