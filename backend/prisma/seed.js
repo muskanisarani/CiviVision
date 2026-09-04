@@ -12,15 +12,15 @@ async function main() {
   await prisma.user.deleteMany({});
 
   // Hash passwords
-  const adminPasswordHash = await bcrypt.hash('admin123', 10);
+  const adminPasswordHash = await bcrypt.hash('123456', 10);
   const userPasswordHash = await bcrypt.hash('muskan123', 10);
 
   // Seed Users
   const admin = await prisma.user.create({
     data: {
-      name: 'GMC Admin',
-      email: 'admin@gmail.com',
-      mobile: '9999999999',
+      name: 'GMC Ward Officer',
+      email: 'civivision@gmail.com',
+      mobile: '6353248918',
       passwordHash: adminPasswordHash,
       city: 'Gandhinagar',
       state: 'Gujarat',

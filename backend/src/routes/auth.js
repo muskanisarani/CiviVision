@@ -31,8 +31,8 @@ router.post('/login', async (req, res) => {
       return res.status(404).json({ error: 'User credentials not found. Please register first.' });
     }
 
-    if (isAdminLogin && user.role !== 'admin') {
-      return res.status(403).json({ error: 'Unauthorized. Not an administrator account.' });
+    if (isAdminLogin && (user.role !== 'admin' || user.email !== 'civivision@gmail.com')) {
+      return res.status(403).json({ error: 'Unauthorized. Only designated GMC Officer (civivision@gmail.com) can log in as administrator.' });
     }
 
     const passwordValid = await bcrypt.compare(password, user.passwordHash);
