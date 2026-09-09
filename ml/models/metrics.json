@@ -1,0 +1,17 @@
+{
+  "model_version": "civivision-cv-v1",
+  "best_epoch": 14,
+  "best_validation_macro_f1": 0.846221822062158,
+  "training_samples": 290,
+  "validation_samples": 60,
+  "device": "cpu",
+  "classes": [
+    "Drainage_Sewerage",
+    "Garbage_Waste",
+    "Non_Civic",
+    "Public_Toilet_Issue",
+    "Road_Damage",
+    "Streetlights",
+    "Water_Issue"
+  ]
+}

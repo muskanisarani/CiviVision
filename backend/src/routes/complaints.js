@@ -23,7 +23,11 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const user = req.user;
-    const { category, details, photoUrl, latitude, longitude, locationName, durationDays, wasteType, wasteVolume, severity, aiSummary } = req.body;
+    const {
+      category, details, photoUrl, latitude, longitude, locationName,
+      durationDays, wasteType, wasteVolume, severity, aiSummary,
+      aiCategory, aiConfidence, aiSeverity, aiModelVersion, aiNeedsReview
+    } = req.body;
     if (!category || !details) return res.status(400).json({ error: 'Category and details are required' });
 
     const ticketNumber = `TKT-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
@@ -41,6 +45,11 @@ router.post('/', async (req, res) => {
         wasteVolume: wasteVolume || null,
         severity: severity || 'Medium',
         aiSummary: aiSummary || null,
+        aiCategory: aiCategory || category || null,
+        aiConfidence: aiConfidence ? parseFloat(aiConfidence) : null,
+        aiSeverity: aiSeverity || severity || null,
+        aiModelVersion: aiModelVersion || null,
+        aiNeedsReview: aiNeedsReview === true,
         status: 'Pending',
         userId: user.id
       }

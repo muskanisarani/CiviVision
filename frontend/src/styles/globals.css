@@ -536,10 +536,146 @@ body.dark-theme label {
   color: #cbd5e1 !important;
 }
 
-[data-theme="dark"] strong,
-body.dark-theme strong {
+[data-theme="dark"] strong:not([style*="color"]):not([class*="ai-"]):not([class*="badge"]),
+body.dark-theme strong:not([style*="color"]):not([class*="ai-"]):not([class*="badge"]) {
+  color: #f8fafc;
+}
+
+/* Dedicated AI Analysis Card & Metric Tiles (Theme Responsive) */
+.ai-analysis-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+  transition: all 0.25s ease;
+}
+
+body.dark-theme .ai-analysis-card,
+[data-theme="dark"] .ai-analysis-card {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45) !important;
+}
+
+.ai-metric-tile {
+  background: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+body.dark-theme .ai-metric-tile,
+[data-theme="dark"] .ai-metric-tile {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.ai-metric-label {
+  font-size: 11px;
+  color: #64748b;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+body.dark-theme .ai-metric-label,
+[data-theme="dark"] .ai-metric-label {
+  color: #94a3b8 !important;
+}
+
+.ai-metric-val {
+  font-size: 13px;
+  font-weight: 800;
+  display: block;
+}
+
+.ai-metric-val-type {
+  color: #0f172a;
+}
+body.dark-theme .ai-metric-val-type,
+[data-theme="dark"] .ai-metric-val-type {
   color: #f8fafc !important;
 }
+
+.ai-metric-val-confidence {
+  color: #4f46e5;
+}
+body.dark-theme .ai-metric-val-confidence,
+[data-theme="dark"] .ai-metric-val-confidence {
+  color: #818cf8 !important;
+}
+
+.ai-metric-val-success {
+  color: #059669;
+}
+body.dark-theme .ai-metric-val-success,
+[data-theme="dark"] .ai-metric-val-success {
+  color: #34d399 !important;
+}
+
+.ai-metric-val-danger {
+  color: #b91c1c;
+}
+body.dark-theme .ai-metric-val-danger,
+[data-theme="dark"] .ai-metric-val-danger {
+  color: #f87171 !important;
+}
+
+.ai-metric-val-warning {
+  color: #d97706;
+}
+body.dark-theme .ai-metric-val-warning,
+[data-theme="dark"] .ai-metric-val-warning {
+  color: #fbbf24 !important;
+}
+
+.ai-metric-val-info {
+  color: #2563eb;
+}
+body.dark-theme .ai-metric-val-info,
+[data-theme="dark"] .ai-metric-val-info {
+  color: #60a5fa !important;
+}
+
+.ai-pred-box {
+  background: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+}
+body.dark-theme .ai-pred-box,
+[data-theme="dark"] .ai-pred-box {
+  background: rgba(15, 23, 42, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.ai-pred-row-title {
+  color: #1e293b;
+}
+body.dark-theme .ai-pred-row-title,
+[data-theme="dark"] .ai-pred-row-title {
+  color: #e2e8f0 !important;
+}
+
+.ai-explanation-box {
+  background: rgba(99, 102, 241, 0.05);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  font-size: 12.5px;
+  color: #334155;
+  line-height: 1.5;
+}
+body.dark-theme .ai-explanation-box,
+[data-theme="dark"] .ai-explanation-box {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border: 1px solid rgba(99, 102, 241, 0.35) !important;
+  color: #e2e8f0 !important;
+}
+
 
 /* Sub-containers, Metric Boxes & Inner Cards in Dark Mode */
 [data-theme="dark"] div[style*="background-color: rgba(241"],

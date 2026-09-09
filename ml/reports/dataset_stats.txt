@@ -1,0 +1,22 @@
+============================================================
+CIVIVISION DATASET PREPARATION REPORT
+============================================================
+
+Total raw images scanned: 503
+Corrupted images excluded: 0
+Duplicate images excluded: 82
+
+Class Breakdown (Clean Unique):
+  - Garbage_Waste            :    57 images
+  - Road_Damage              :    67 images
+  - Water_Issue              :    59 images
+  - Streetlights             :    58 images
+  - Drainage_Sewerage        :    61 images
+  - Public_Toilet_Issue      :    55 images
+  - Non_Civic                :    64 images
+
+Split Distribution:
+  - Train      (70%): 290 images
+  - Validation (15%): 60 images
+  - Test       (15%): 71 images
+============================================================

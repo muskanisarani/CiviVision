@@ -303,8 +303,22 @@ const UserComplaint = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          category, details: `${description}\n\n[Details]\nType: ${wasteType}\nVolume/Scale: ${wasteVolume}`,
-          photoUrl: photoBase64, latitude, longitude, locationName: location, durationDays, wasteType, wasteVolume, severity, aiSummary: aiSummary || description
+          category,
+          details: `${description}\n\n[Details]\nType: ${wasteType}\nVolume/Scale: ${wasteVolume}`,
+          photoUrl: photoBase64,
+          latitude,
+          longitude,
+          locationName: location,
+          durationDays,
+          wasteType,
+          wasteVolume,
+          severity,
+          aiSummary: aiSummary || description,
+          aiCategory: geminiResult?.category || category,
+          aiConfidence: geminiResult?.confidence ? (geminiResult.confidence / 100) : null,
+          aiSeverity: geminiResult?.severity || severity,
+          aiModelVersion: geminiResult?.model_metadata?.model_version || 'civivision-cv-v1',
+          aiNeedsReview: geminiResult?.needs_human_review || false
         }),
         credentials: 'include'
       });
@@ -437,78 +451,109 @@ const UserComplaint = () => {
                           </span>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#fff', padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(15, 23, 42, 0.1)' }}>
-                        <span style={{ fontSize: '11px', fontWeight: '700', color: '#64748b' }}>Human Verification:</span>
-                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#d97706' }}>Pending</span>
+                      <div className="ai-metric-tile" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px' }}>
+                        <span style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8' }}>Human Verification:</span>
+                        <span style={{ fontSize: '11px', fontWeight: '800', color: '#f59e0b' }}>Pending</span>
                       </div>
                     </div>
 
                     {/* Structured IMAGE ANALYSIS Card */}
-                    <div style={{
-                      background: '#ffffff',
-                      borderRadius: '18px',
-                      border: '1px solid rgba(15, 23, 42, 0.1)',
-                      padding: '18px 20px',
-                      boxShadow: '0 4px 20px rgba(15, 23, 42, 0.04)'
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>
+                    <div className="ai-analysis-card">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(15, 23, 42, 0.08)', paddingBottom: '10px' }}>
                         <span style={{ fontSize: '12px', fontWeight: '800', color: '#4f46e5', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
                           📊 IMAGE ANALYSIS
                         </span>
-                        <span style={{ fontSize: '11px', color: '#64748b', fontWeight: '600' }}>
-                          Multimodal Vision Intelligence
+                        <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: '600' }}>
+                          {geminiResult?.model_metadata?.model_name || 'MobileNetV3-Large'} ({geminiResult?.model_metadata?.model_version || 'civivision-cv-v1'})
                         </span>
                       </div>
 
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '14px' }}>
                         
-                        <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                          <span style={{ fontSize: '11px', color: '#64748b', display: 'block', fontWeight: '600' }}>Civic Issue</span>
-                          <strong style={{ fontSize: '13px', color: hasCivicIssue ? '#059669' : '#64748b' }}>
+                        <div className="ai-metric-tile">
+                          <span className="ai-metric-label">Civic Issue</span>
+                          <span className={`ai-metric-val ${hasCivicIssue ? 'ai-metric-val-success' : 'ai-metric-val-danger'}`}>
                             {hasCivicIssue ? '✅ Detected' : '❌ Not Detected'}
-                          </strong>
+                          </span>
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                          <span style={{ fontSize: '11px', color: '#64748b', display: 'block', fontWeight: '600' }}>Type</span>
-                          <strong style={{ fontSize: '13px', color: '#0f172a' }}>{geminiResult?.defect_type || geminiResult?.category || wasteType || 'Broken Footpath / Pavement'}</strong>
+                        <div className="ai-metric-tile">
+                          <span className="ai-metric-label">Type</span>
+                          <span className="ai-metric-val ai-metric-val-type">
+                            {geminiResult?.defect_type || geminiResult?.category || wasteType || 'Road Damage'}
+                          </span>
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                          <span style={{ fontSize: '11px', color: '#64748b', display: 'block', fontWeight: '600' }}>AI Confidence</span>
-                          <strong style={{ fontSize: '13px', color: '#4f46e5' }}>{geminiResult?.confidence || 88}%</strong>
+                        <div className="ai-metric-tile">
+                          <span className="ai-metric-label">AI Confidence</span>
+                          <span className="ai-metric-val ai-metric-val-confidence">
+                            {geminiResult?.confidence || 88}%
+                          </span>
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                          <span style={{ fontSize: '11px', color: '#64748b', display: 'block', fontWeight: '600' }}>Image Provenance</span>
-                          <strong style={{ fontSize: '13px', color: '#d97706' }}>⚠️ Requires field inspection</strong>
+                        <div className="ai-metric-tile">
+                          <span className="ai-metric-label">Image Provenance</span>
+                          <span className="ai-metric-val ai-metric-val-warning">
+                            ⚠️ Requires field inspection
+                          </span>
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                          <span style={{ fontSize: '11px', color: '#64748b', display: 'block', fontWeight: '600' }}>Ward Deduplication (150m)</span>
-                          <strong style={{ fontSize: '13px', color: duplicateWarning ? '#dc2626' : '#2563eb' }}>
+                        <div className="ai-metric-tile">
+                          <span className="ai-metric-label">Ward Deduplication (150m)</span>
+                          <span className={`ai-metric-val ${duplicateWarning ? 'ai-metric-val-danger' : 'ai-metric-val-info'}`}>
                             {duplicateWarning ? '⚠️ 1 Potential match nearby' : '🔍 0 Duplicates nearby'}
-                          </strong>
+                          </span>
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                          <span style={{ fontSize: '11px', color: '#64748b', display: 'block', fontWeight: '600' }}>Civic Risk</span>
-                          <strong style={{ fontSize: '13px', color: geminiResult?.civic_risk === 'HIGH' || geminiResult?.civic_risk === 'CRITICAL' ? '#b91c1c' : (hasCivicIssue ? '#d97706' : '#059669') }}>
+                        <div className="ai-metric-tile">
+                          <span className="ai-metric-label">Civic Risk</span>
+                          <span className={`ai-metric-val ${geminiResult?.civic_risk === 'HIGH' || geminiResult?.civic_risk === 'CRITICAL' ? 'ai-metric-val-danger' : (hasCivicIssue ? 'ai-metric-val-warning' : 'ai-metric-val-success')}`}>
                             {geminiResult?.civic_risk || (hasCivicIssue ? 'MEDIUM' : 'LOW')}
-                          </strong>
+                          </span>
                         </div>
 
-                        <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                          <span style={{ fontSize: '11px', color: '#64748b', display: 'block', fontWeight: '600' }}>Human Verification</span>
-                          <strong style={{ fontSize: '13px', color: '#d97706' }}>⏳ Pending</strong>
+                        <div className="ai-metric-tile">
+                          <span className="ai-metric-label">Human Verification</span>
+                          <span className="ai-metric-val ai-metric-val-warning">
+                            ⏳ Pending
+                          </span>
                         </div>
 
                       </div>
 
+                      {/* Top Predictions Multi-Class Breakdown */}
+                      {geminiResult?.top_predictions && geminiResult.top_predictions.length > 0 && (
+                        <div className="ai-pred-box">
+                          <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '8px', color: '#6366f1' }}>
+                            🎯 Top Model Predictions:
+                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            {geminiResult.top_predictions.map((p, idx) => {
+                              const pct = Math.round((p.confidence <= 1 ? p.confidence * 100 : p.confidence));
+                              return (
+                                <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px' }}>
+                                  <span className="ai-pred-row-title" style={{ fontWeight: idx === 0 ? '700' : '500' }}>
+                                    {idx + 1}. {p.category}
+                                  </span>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '120px' }}>
+                                    <div style={{ flex: 1, height: '6px', background: 'rgba(226, 232, 240, 0.4)', borderRadius: '3px', overflow: 'hidden' }}>
+                                      <div style={{ width: `${pct}%`, height: '100%', background: idx === 0 ? '#6366f1' : '#94a3b8', borderRadius: '3px' }}></div>
+                                    </div>
+                                    <span style={{ fontSize: '11px', fontWeight: '700', color: idx === 0 ? '#6366f1' : '#94a3b8', minWidth: '32px', textAlign: 'right' }}>
+                                      {pct}%
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
                       {/* AI Visual Explanation */}
                       {geminiResult?.description && (
-                        <div style={{ background: 'rgba(99, 102, 241, 0.05)', padding: '12px 14px', borderRadius: '12px', border: '1px solid rgba(99, 102, 241, 0.15)', fontSize: '12.5px', color: '#334155', lineHeight: '1.5' }}>
-                          <strong style={{ color: '#4f46e5', display: 'block', marginBottom: '2px' }}>📝 Visual Evidence Diagnostic:</strong>
+                        <div className="ai-explanation-box">
+                          <strong style={{ color: '#6366f1', display: 'block', marginBottom: '2px' }}>📝 Visual Evidence Diagnostic:</strong>
                           "{geminiResult.description}"
                         </div>
                       )}

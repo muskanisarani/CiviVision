@@ -1,0 +1,29 @@
+{
+  "classes": [
+    "Drainage_Sewerage",
+    "Garbage_Waste",
+    "Non_Civic",
+    "Public_Toilet_Issue",
+    "Road_Damage",
+    "Streetlights",
+    "Water_Issue"
+  ],
+  "class_to_idx": {
+    "Drainage_Sewerage": 0,
+    "Garbage_Waste": 1,
+    "Non_Civic": 2,
+    "Public_Toilet_Issue": 3,
+    "Road_Damage": 4,
+    "Streetlights": 5,
+    "Water_Issue": 6
+  },
+  "display_names": {
+    "Garbage_Waste": "Garbage / Waste",
+    "Road_Damage": "Road Damage",
+    "Water_Issue": "Water Issue",
+    "Streetlights": "Streetlights",
+    "Drainage_Sewerage": "Drainage & Sewerage",
+    "Public_Toilet_Issue": "Public Toilet Issue",
+    "Non_Civic": "Non-Civic / Invalid"
+  }
+}

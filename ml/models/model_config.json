@@ -1,0 +1,20 @@
+{
+  "model_name": "mobilenet_v3_large",
+  "model_version": "civivision-cv-v1",
+  "num_classes": 7,
+  "input_size": [224, 224],
+  "normalization": {
+    "mean": [0.485, 0.456, 0.406],
+    "std": [0.229, 0.224, 0.225]
+  },
+  "default_confidence_threshold": 0.70,
+  "classes": [
+    "Garbage_Waste",
+    "Road_Damage",
+    "Water_Issue",
+    "Streetlights",
+    "Drainage_Sewerage",
+    "Public_Toilet_Issue",
+    "Non_Civic"
+  ]
+}

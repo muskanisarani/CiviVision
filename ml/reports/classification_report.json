@@ -1,0 +1,53 @@
+{
+  "model_version": "civivision-cv-v1",
+  "total_test_samples": 71,
+  "overall_accuracy": 0.7746478873239436,
+  "macro_precision": 0.7787981859410431,
+  "macro_recall": 0.7753246753246753,
+  "macro_f1": 0.7715883524202275,
+  "weighted_f1": 0.7706477487522082,
+  "per_class_metrics": {
+    "Drainage_Sewerage": {
+      "precision": 0.7777777777777778,
+      "recall": 0.7,
+      "f1_score": 0.7368421052631579,
+      "support": 10
+    },
+    "Garbage_Waste": {
+      "precision": 0.6666666666666666,
+      "recall": 0.6,
+      "f1_score": 0.631578947368421,
+      "support": 10
+    },
+    "Non_Civic": {
+      "precision": 0.8333333333333334,
+      "recall": 0.9090909090909091,
+      "f1_score": 0.8695652173913043,
+      "support": 11
+    },
+    "Public_Toilet_Issue": {
+      "precision": 0.9,
+      "recall": 1.0,
+      "f1_score": 0.9473684210526315,
+      "support": 9
+    },
+    "Road_Damage": {
+      "precision": 0.75,
+      "recall": 0.8181818181818182,
+      "f1_score": 0.782608695652174,
+      "support": 11
+    },
+    "Streetlights": {
+      "precision": 0.8571428571428571,
+      "recall": 0.6,
+      "f1_score": 0.7058823529411765,
+      "support": 10
+    },
+    "Water_Issue": {
+      "precision": 0.6666666666666666,
+      "recall": 0.8,
+      "f1_score": 0.7272727272727273,
+      "support": 10
+    }
+  }
+}

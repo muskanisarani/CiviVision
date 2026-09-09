@@ -46,6 +46,11 @@ model Complaint {
   wasteVolume  String?
   severity     String?
   aiSummary    String?
+  aiCategory   String?
+  aiConfidence Float?
+  aiSeverity   String?
+  aiModelVersion String?
+  aiNeedsReview  Boolean?      @default(false)
   rating       Int?          // 1 to 5 stars
   comment      String?       // Feedback review comment
   createdAt    DateTime      @default(now())

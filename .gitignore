@@ -42,3 +42,20 @@ yarn-error.log*
 
 # Vercel
 .vercel
+
+# Python & ML
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+
+# ML Large Model weights & split datasets (keep raw folder structure)
+ml/models/*.pth
+ml/dataset/train/*
+ml/dataset/validation/*
+ml/dataset/test/*
+!ml/dataset/**/.gitkeep
+
