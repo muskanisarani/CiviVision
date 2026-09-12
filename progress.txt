@@ -1,0 +1,6 @@
+# Ralph Loop Progress Log
+# Append-only. Never delete entries.
+
+[2026-09-04] Completed MobileNetV3 ML pipeline, FastAPI microservice, and Express ML integration.
+[2026-09-08] Scaled dataset to 500+ raw / 421 clean unique images across 7 classes with zero duplicates.
+[2026-09-09] Fixed frontend dark mode contrast on AI diagnostic cards in UserComplaint.js.
